@@ -142,7 +142,7 @@
 
     button.add-btn:hover { background-color: #0369a1; }
 
-    /* 업무 목록 스타일 */
+    /* 업무 목록 및 드래그 스타일 */
     .task-list {
       list-style: none;
       padding: 0;
@@ -159,6 +159,26 @@
       margin-bottom: 10px;
       border: 1px solid #e2e8f0;
       gap: 10px;
+      cursor: grab;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      user-select: none;
+    }
+
+    .task-item:active {
+      cursor: grabbing;
+    }
+
+    .task-item.dragging {
+      opacity: 0.5;
+      background: #e0f2fe;
+      border: 2px dashed #0284c7;
+    }
+
+    .drag-handle {
+      color: #94a3b8;
+      font-weight: bold;
+      margin-right: 6px;
+      cursor: grab;
     }
 
     .task-title {
@@ -250,18 +270,16 @@
 </div>
 
 <script>
-  // 2026년 하반기 주요 공휴일 (YYYY-MM-DD)
   const holidays2026 = [
-    "2026-09-24", "2026-09-25", "2026-09-26", // 추석 연휴 (목, 금, 토)
-    "2026-10-03", "2026-10-05", // 개천절 및 대체공휴일
-    "2026-10-09"  // 한글날
+    "2026-09-24", "2026-09-25", "2026-09-26",
+    "2026-10-03", "2026-10-05",
+    "2026-10-09"
   ];
 
-  // D-Day 및 평일/주말 계산 함수 (오늘 제외, 내일부터 계산)
   function calculateDday() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const targetDate = new Date(2026, 10, 20); // 11월 20일 (월은 0부터 시작하므로 10)
+    const targetDate = new Date("2026-11-20T00:00:00");
 
     if (today > targetDate) {
       document.getElementById('days-total').innerText = "종료";
@@ -270,20 +288,17 @@
       return;
     }
 
-    // 오늘을 제외한 순수 남은 일수 계산
     const remainingDays = Math.round((targetDate - today) / (1000 * 60 * 60 * 24));
 
     let workDays = 0;
     let offDays = 0;
 
-    // 내일부터 11월 20일까지 순회하며 평일/공휴일 체크
     let current = new Date(today);
-    current.setDate(current.getDate() + 1); // 내일부터 계산 시작
+    current.setDate(current.getDate() + 1);
 
     while (current <= targetDate) {
-      const dayOfWeek = current.getDay(); // 0: 일요일, 6: 토요일
+      const dayOfWeek = current.getDay();
       
-      // YYYY-MM-DD 형식으로 문자열 변환
       const year = current.getFullYear();
       const month = String(current.getMonth() + 1).padStart(2, '0');
       const day = String(current.getDate()).padStart(2, '0');
@@ -305,7 +320,7 @@
     document.getElementById('days-off').innerText = `${offDays}일`;
   }
 
-  // 데이터 관리 (로컬 저장소 연동)
+  // 데이터 관리
   let tasks = JSON.parse(localStorage.getItem('myTasks')) || [];
 
   const priorityOrder = ['보통', '높음', '낮음'];
@@ -337,7 +352,6 @@
     saveTasks();
   }
 
-  // 우선순위 클릭시 변경 (보통 -> 높음 -> 낮음)
   function togglePriority(id) {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
@@ -346,7 +360,6 @@
     saveTasks();
   }
 
-  // 상태 클릭시 변경 (예정 -> 진행 -> 검토 -> 완료)
   function toggleStatus(id) {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
@@ -366,19 +379,20 @@
 
       const li = document.createElement('li');
       li.className = 'task-item';
+      li.draggable = true;
+      li.dataset.id = task.id;
 
-      // 우선순위 디자인 클래스
       let pClass = 'priority-medium';
       if (task.priority === '높음') pClass = 'priority-high';
       if (task.priority === '낮음') pClass = 'priority-low';
 
-      // 상태 디자인 클래스
       let sClass = 'status-scheduled';
       if (task.status === '진행') sClass = 'status-in-progress';
       if (task.status === '검토') sClass = 'status-review';
       if (task.status === '완료') sClass = 'status-completed';
 
       li.innerHTML = `
+        <span class="drag-handle">⋮⋮</span>
         <span class="task-title" style="${task.status === '완료' ? 'text-decoration: line-through; color: #94a3b8;' : ''}">
           ${escapeHtml(task.title)}
         </span>
@@ -394,13 +408,16 @@
       listEl.appendChild(li);
     });
 
+    // 드래그 앤 드롭 이벤트 등록
+    addDragAndDropEvents();
+
     // 상태별 개수 업데이트
     document.getElementById('count-scheduled').innerText = statusCounts['예정'];
     document.getElementById('count-in-progress').innerText = statusCounts['진행'];
     document.getElementById('count-review').innerText = statusCounts['검토'];
     document.getElementById('count-completed').innerText = statusCounts['완료'];
 
-    // 전체 진행도 퍼센트 계산
+    // 진행도 계산
     const total = tasks.length;
     const completed = statusCounts['완료'];
     const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
@@ -409,13 +426,64 @@
     document.getElementById('progress-fill').style.width = `${percent}%`;
   }
 
+  // 드래그 앤 드롭 이벤트 처리
+  function addDragAndDropEvents() {
+    const list = document.getElementById('task-list');
+    const items = list.querySelectorAll('.task-item');
+
+    items.forEach(item => {
+      item.addEventListener('dragstart', (e) => {
+        // 버튼 클릭 중 드래그 방지
+        if (e.target.tagName === 'BUTTON') {
+          e.preventDefault();
+          return;
+        }
+        item.classList.add('dragging');
+      });
+
+      item.addEventListener('dragend', () => {
+        item.classList.remove('dragging');
+        updateTasksOrder();
+      });
+    });
+
+    list.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      const draggingItem = document.querySelector('.dragging');
+      if (!draggingItem) return;
+
+      const siblings = [...list.querySelectorAll('.task-item:not(.dragging)')];
+      const nextSibling = siblings.find(sibling => {
+        return e.clientY <= sibling.getBoundingClientRect().top + sibling.offsetHeight / 2;
+      });
+
+      list.insertBefore(draggingItem, nextSibling);
+    });
+  }
+
+  // 드래그 후 새로 변경된 순서 저장
+  function updateTasksOrder() {
+    const listItems = document.querySelectorAll('.task-item');
+    const newTasks = [];
+
+    listItems.forEach(item => {
+      const id = Number(item.dataset.id);
+      const foundTask = tasks.find(t => t.id === id);
+      if (foundTask) {
+        newTasks.push(foundTask);
+      }
+    });
+
+    tasks = newTasks;
+    localStorage.setItem('myTasks', JSON.stringify(tasks));
+  }
+
   function escapeHtml(text) {
     return text.replace(/[&<>"']/g, function(m) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
     });
   }
 
-  // 초기화 실행
   calculateDday();
   render();
 </script>

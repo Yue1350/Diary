@@ -608,7 +608,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_HfsHsl_AY3b83R0xbjm1bkna2ox_QZvDlFbJ5MifumO4EMIyRlEvonncL_YC3cml/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhwwmJbFXc4lXD3MwnKS63P0cN1siu4NjBLTprdUMD94w6gKPXWGrks-AJagPC30n7/exec";
         const HEIGHT_CM = 173.5;
         const INITIAL_WEIGHT = 82.25;
         const TARGET_WEIGHT = 65.0;
@@ -639,20 +639,28 @@
             }
         }
 
-        async function fetchRecordsFromSheet() {
+        // JSONP 요청으로 CORS 차단 우회
+        function fetchRecordsFromSheet() {
             setSyncStatus(true, "구글 시트 동기화 중...");
-            try {
-                const res = await fetch(SCRIPT_URL);
-                const data = await res.json();
+            
+            const oldScript = document.getElementById('jsonp-script');
+            if (oldScript) oldScript.remove();
+
+            window.handleSheetResponse = function(data) {
                 if (Array.isArray(data)) {
                     records = data;
                     renderRecords();
                     setSyncStatus(false, "구글 시트 동기화 완료");
                 }
-            } catch (err) {
-                console.error(err);
-                setSyncStatus(true, "시트 연결 오류");
-            }
+            };
+
+            const script = document.createElement('script');
+            script.id = 'jsonp-script';
+            script.src = SCRIPT_URL + '?callback=handleSheetResponse&t=' + new Date().getTime();
+            script.onerror = function() {
+                setSyncStatus(true, "시트 연결 실패");
+            };
+            document.body.appendChild(script);
         }
 
         function getTargetWeightForDate(dateStr) {
@@ -976,7 +984,7 @@
                     document.getElementById('input-memo').value = '';
                     btnSave.disabled = false;
                     btnSave.innerText = "기록";
-                }, 1200);
+                }, 1500);
 
             } catch (err) {
                 alert("저장 중 오류가 발생했습니다.");
@@ -1002,7 +1010,7 @@
 
                 setTimeout(() => {
                     fetchRecordsFromSheet();
-                }, 1200);
+                }, 1500);
 
             } catch (err) {
                 alert("삭제 중 오류가 발생했습니다.");

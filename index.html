@@ -315,7 +315,7 @@
         /* Form Controls */
         .input-row {
             display: grid;
-            grid-template-columns: 1.2fr 1fr 1fr 1.5fr auto;
+            grid-template-columns: 1fr 1fr auto;
             gap: 8px;
             margin-bottom: 16px;
         }
@@ -339,7 +339,7 @@
             background: var(--accent-primary);
             color: #ffffff;
             border: none;
-            padding: 10px 16px;
+            padding: 10px 20px;
             border-radius: 8px;
             font-weight: 600;
             font-size: 0.85rem;
@@ -387,6 +387,21 @@
             color: var(--text-main);
         }
 
+        .btn-edit {
+            background: transparent;
+            color: var(--accent-primary);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            margin-right: 4px;
+        }
+
+        .btn-edit:hover {
+            background: rgba(99, 102, 241, 0.15);
+        }
+
         .btn-del {
             background: transparent;
             color: var(--danger);
@@ -408,9 +423,6 @@
             .metrics-banner {
                 grid-template-columns: repeat(3, 1fr);
             }
-            .input-row {
-                grid-template-columns: 1fr 1fr;
-            }
         }
 
         @media (max-width: 650px) {
@@ -419,6 +431,9 @@
             }
             .bmi-grid {
                 grid-template-columns: repeat(3, 1fr);
+            }
+            .input-row {
+                grid-template-columns: 1fr 1fr auto;
             }
         }
     </style>
@@ -554,13 +569,11 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">📝 체중 & 펩시/식단 기록하기</div>
+                        <div class="card-title">📝 체중 기록하기</div>
                     </div>
                     <div class="input-row">
                         <input type="date" id="input-date">
-                        <input type="number" step="0.01" id="input-weight" placeholder="몸무게">
-                        <input type="text" id="input-pepsi" placeholder="펩시(캔/페트)">
-                        <input type="text" id="input-memo" placeholder="식단 메모">
+                        <input type="number" step="0.01" id="input-weight" placeholder="몸무게 (kg)">
                         <button class="btn-submit" id="btn-save" onclick="addRecord()">기록</button>
                     </div>
 
@@ -570,9 +583,7 @@
                                 <tr>
                                     <th>날짜</th>
                                     <th>체중</th>
-                                    <th>펩시</th>
-                                    <th>식단 메모</th>
-                                    <th></th>
+                                    <th style="text-align: right;">관리</th>
                                 </tr>
                             </thead>
                             <tbody id="record-list"></tbody>
@@ -608,7 +619,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyloApmhMznIyWn0cj4funJuxEnusttzvILy7BpKwUgDm9Ae57OO-FsgEUTY1bFHRsq/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_HfsHsl_AY3b83R0xbjm1bkna2ox_QZvDlFbJ5MifumO4EMIyRlEvonncL_YC3cml/exec";
         const HEIGHT_CM = 173.5;
         const INITIAL_WEIGHT = 82.25;
         const TARGET_WEIGHT = 65.0;
@@ -748,6 +759,7 @@
                         x: {
                             type: 'time',
                             time: { unit: 'day', displayFormats: { day: 'MM/dd' } },
+                            min: '2026-09-16', // 최소 시작일 고정
                             grid: { color: 'rgba(255, 255, 255, 0.05)' },
                             ticks: { color: '#94a3b8' }
                         },
@@ -761,8 +773,17 @@
                     },
                     plugins: {
                         zoom: {
-                            pan: { enabled: true, mode: 'x' },
-                            zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' }
+                            pan: { 
+                                enabled: true, 
+                                mode: 'x',
+                                limits: { x: { min: '2026-09-16' } }
+                            },
+                            zoom: { 
+                                wheel: { enabled: true }, 
+                                pinch: { enabled: true }, 
+                                mode: 'x',
+                                limits: { x: { min: '2026-09-16' } }
+                            }
                         },
                         legend: { labels: { color: '#f8fafc', font: { size: 12 } } }
                     }
@@ -836,15 +857,14 @@
 
             records.forEach((rec, idx) => {
                 const tr = document.createElement('tr');
-                const pepsiVal = rec.pepsi || '-';
-                const memoVal = rec.memo || '-';
 
                 tr.innerHTML = `
                     <td>${rec.date.slice(5)}</td>
-                    <td><strong>${rec.weight.toFixed(2)}</strong></td>
-                    <td>${pepsiVal}</td>
-                    <td>${memoVal}</td>
-                    <td><button class="btn-del" onclick="deleteRecord('${rec.date}')">✕</button></td>
+                    <td><strong>${rec.weight.toFixed(2)} kg</strong></td>
+                    <td style="text-align: right;">
+                        <button class="btn-edit" onclick="editRecord('${rec.date}')">✎</button>
+                        <button class="btn-del" onclick="deleteRecord('${rec.date}')">✕</button>
+                    </td>
                 `;
                 listEl.appendChild(tr);
             });
@@ -907,6 +927,15 @@
             updateCharts();
         }
 
+        function editRecord(targetDate) {
+            const targetRec = records.find(r => r.date === targetDate);
+            if (!targetRec) return;
+
+            document.getElementById('input-date').value = targetRec.date;
+            document.getElementById('input-weight').value = targetRec.weight;
+            document.getElementById('input-weight').focus();
+        }
+
         function calculatePaceAndEstimation(latest) {
             if (records.length < 2) {
                 document.getElementById('val-pace').innerHTML = `- <span style="font-size: 0.9rem;">kg/주</span>`;
@@ -950,8 +979,6 @@
         async function addRecord() {
             const dateInput = document.getElementById('input-date').value;
             const weightInput = parseFloat(document.getElementById('input-weight').value);
-            const pepsiInput = document.getElementById('input-pepsi').value.trim() || '-';
-            const memoInput = document.getElementById('input-memo').value.trim() || '-';
 
             if (!dateInput || isNaN(weightInput)) {
                 alert('날짜와 체중을 올바르게 입력해주세요!');
@@ -972,16 +999,14 @@
                         action: 'add',
                         date: dateInput,
                         weight: weightInput,
-                        pepsi: pepsiInput,
-                        memo: memoInput
+                        pepsi: '-',
+                        memo: '-'
                     })
                 });
 
                 setTimeout(() => {
                     fetchRecordsFromSheet();
                     document.getElementById('input-weight').value = '';
-                    document.getElementById('input-pepsi').value = '';
-                    document.getElementById('input-memo').value = '';
                     btnSave.disabled = false;
                     btnSave.innerText = "기록";
                 }, 1500);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💙 다이어트 목표 달성 스마트 트래커 💙</title>
+    <title>💙 65kg 목표 달성 다이어트 스마트 트래커 💙</title>
     <!-- Chart.js 및 날짜/zoom 플러그인 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
@@ -60,18 +60,24 @@
             gap: 10px;
         }
 
-        /* Compact Top Header */
+        /* Combined Compact Header & Progress Section */
         header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 8px;
             background: var(--card-bg);
             backdrop-filter: blur(12px);
             border: 2px solid var(--card-border);
-            padding: 10px 20px;
+            padding: 12px 20px;
             border-radius: 16px;
             box-shadow: 0 4px 15px rgba(56, 189, 248, 0.12);
             flex-shrink: 0;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .header-title h1 {
@@ -110,6 +116,46 @@
         .status-dot.active {
             background: var(--success);
             box-shadow: 0 0 8px var(--success);
+        }
+
+        /* Header 내 통합 감량 진행률 & D-Day 진행 바 */
+        .header-progress-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            padding-top: 6px;
+            border-top: 1px dashed var(--card-border);
+        }
+
+        .progress-box-item {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .progress-label-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #0369a1;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 10px;
+            background: #e0f2fe;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #38bdf8, #0284c7);
+            border-radius: 10px;
+            transition: width 0.6s ease;
         }
 
         /* Cute Tab Navigation */
@@ -251,49 +297,6 @@
             min-height: 0;
         }
 
-        /* 💙 추가된 감량 진행률 & D-Day 귀여운 세로 진행 바 💙 */
-        .top-progress-section {
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid var(--card-border);
-            border-radius: 16px;
-            padding: 10px 16px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            flex-shrink: 0;
-        }
-
-        .progress-box-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .progress-label-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #0369a1;
-        }
-
-        .progress-track {
-            width: 100%;
-            height: 12px;
-            background: #e0f2fe;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid var(--card-border);
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #38bdf8, #0284c7);
-            border-radius: 10px;
-            transition: width 0.6s ease;
-        }
-
         /* Input Controls */
         .input-row {
             display: grid;
@@ -403,46 +406,48 @@
 <body>
 
     <div class="dashboard-container">
-        <!-- Header -->
+        <!-- Header & Integrated Progress Area -->
         <header>
-            <div class="header-title">
-                <h1>💙 다이어트 목표 달성 스마트 트래커 💙</h1>
-                <p>신장 173.5cm | 시작 82.25kg ➡️ 최종 목표 65.0kg 💙</p>
+            <div class="header-top">
+                <div class="header-title">
+                    <h1>💙 다이어트 스마트 트래커 💙</h1>
+                    <p>신장 173.5cm | 시작 82.25kg ➡️ 최종 목표 65.0kg 💙</p>
+                </div>
+                <div class="sync-status">
+                    <div class="status-dot" id="status-dot"></div>
+                    <span id="status-text">구글 시트 연동 중...</span>
+                </div>
             </div>
-            <div class="sync-status">
-                <div class="status-dot" id="status-dot"></div>
-                <span id="status-text">구글 시트 연동 중...</span>
+
+            <!-- 헤더 상단 영역에 통합된 감량 진행률 & D-Day 진행 바 -->
+            <div class="header-progress-row">
+                <div class="progress-box-item">
+                    <div class="progress-label-row">
+                        <span>💙 총 감량 진행률</span>
+                        <span id="txt-progress-percent" style="color: var(--accent-primary);">0.0%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="bar-progress"></div>
+                    </div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); text-align: right;" id="txt-total-loss">
+                        총 -0.00kg 감량 완료 💙
+                    </div>
+                </div>
+
+                <div class="progress-box-item">
+                    <div class="progress-label-row">
+                        <span>⏳ 남은 기간 대비 감량 여정 (D-Day)</span>
+                        <span id="txt-dday-percent" style="color: var(--accent-primary);">0.0%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="bar-dday" style="background: linear-gradient(90deg, #38bdf8, #10b981);"></div>
+                    </div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); text-align: right;" id="txt-dday-info">
+                        목표일까지 D-100 남음 💙
+                    </div>
+                </div>
             </div>
         </header>
-
-        <!-- 💙 감량 진행률 및 D-Day 카운트 세로 진행 바 (상단배치!) 💙 -->
-        <div class="top-progress-section">
-            <div class="progress-box-item">
-                <div class="progress-label-row">
-                    <span>💙 총 감량 진행률</span>
-                    <span id="txt-progress-percent" style="color: var(--accent-primary);">0.0%</span>
-                </div>
-                <div class="progress-track">
-                    <div class="progress-fill" id="bar-progress"></div>
-                </div>
-                <div style="font-size: 0.72rem; color: var(--text-muted); text-align: right;" id="txt-total-loss">
-                    총 -0.00kg 감량 완료 💙
-                </div>
-            </div>
-
-            <div class="progress-box-item">
-                <div class="progress-label-row">
-                    <span>⏳ 남은 기간 대비 감량 여정 (D-Day)</span>
-                    <span id="txt-dday-percent" style="color: var(--accent-primary);">0.0%</span>
-                </div>
-                <div class="progress-track">
-                    <div class="progress-fill" id="bar-dday" style="background: linear-gradient(90deg, #38bdf8, #10b981);"></div>
-                </div>
-                <div style="font-size: 0.72rem; color: var(--text-muted); text-align: right;" id="txt-dday-info">
-                    목표일까지 D-100 남음 💙
-                </div>
-            </div>
-        </div>
 
         <!-- 파스텔 하늘색 탭 메뉴 -->
         <nav class="tab-nav">

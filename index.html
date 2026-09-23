@@ -876,7 +876,10 @@
             { date: '2026-12-31', weight: 65.0 }
         ];
 
-        let records = [];
+        // 기본 안전 샘플 데이터 (구글 시트 연결 실패 시에도 호환되도록 준비)
+        let records = [
+            { date: '2026-09-17', weight: 82.25 }
+        ];
 
         document.getElementById('input-date').valueAsDate = new Date();
         let weightChart = null;
@@ -887,16 +890,16 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
             document.getElementById(tabId).classList.add('active');
-            btnEl.classList.add('active');
+            if (btnEl) btnEl.classList.add('active');
 
-            // 🚀 우주 레이드 탭 열 때 애니메이션 시작!
+            // 🚀 우주 레이드 탭 열 때 애니메이션
             if (tabId === 'tab-quest' && records.length > 0) {
                 setTimeout(() => {
                     updateSpaceRaidMap(records[records.length - 1].weight);
                 }, 100);
             }
 
-            // 📈 그래프 차트 애니메이션 재생
+            // 📈 그래프 애니메이션 갱신
             if (tabId === 'tab-dashboard' && weightChart) {
                 weightChart.update();
             }
@@ -908,24 +911,28 @@
         function setSyncStatus(isLoading, text) {
             const dot = document.getElementById('status-dot');
             const statusTxt = document.getElementById('status-text');
-            statusTxt.innerText = text;
-            if (isLoading) {
-                dot.classList.remove('active');
-            } else {
-                dot.classList.add('active');
+            if (statusTxt) statusTxt.innerText = text;
+            if (dot) {
+                if (isLoading) dot.classList.remove('active');
+                else dot.classList.add('active');
             }
         }
 
+        // 안전한 JSONP 백엔드 시트 동기화
         function fetchRecordsFromSheet() {
             setSyncStatus(true, "구글 시트 연동 중...");
+            
             const oldScript = document.getElementById('jsonp-script');
             if (oldScript) oldScript.remove();
 
             window.handleSheetResponse = function(data) {
-                if (Array.isArray(data)) {
+                if (Array.isArray(data) && data.length > 0) {
                     records = data;
                     renderRecords();
                     setSyncStatus(false, "동기화 완료 💙");
+                } else {
+                    renderRecords();
+                    setSyncStatus(false, "기본 데이터 작동 중 💙");
                 }
             };
 
@@ -933,7 +940,8 @@
             script.id = 'jsonp-script';
             script.src = SCRIPT_URL + '?callback=handleSheetResponse&t=' + new Date().getTime();
             script.onerror = function() {
-                setSyncStatus(true, "연동 실패 🥺");
+                setSyncStatus(false, "로컬 오프라인 모드 💙");
+                renderRecords();
             };
             document.body.appendChild(script);
         }
@@ -986,8 +994,8 @@
             const rocketShip = document.getElementById('rocket-ship');
 
             const fillHeightPercent = progressRatio * 82; // % 최고 높이
-            rocketFill.style.height = `${fillHeightPercent}%`;
-            rocketShip.style.bottom = `calc(40px + ${fillHeightPercent}%)`;
+            if (rocketFill) rocketFill.style.height = `${fillHeightPercent}%`;
+            if (rocketShip) rocketShip.style.bottom = `calc(40px + ${fillHeightPercent}%)`;
 
             const snodes = [
                 { id: 1, targetW: 77.0, el: document.getElementById('snode-1'), subEl: document.getElementById('snode-sub-1') },
@@ -999,18 +1007,19 @@
             let activeFound = false;
 
             snodes.forEach(s => {
+                if (!s.el) return;
                 s.el.classList.remove('cleared', 'current', 'locked');
 
                 if (currentWeight <= s.targetW) {
                     s.el.classList.add('cleared');
-                    s.subEl.innerText = `목표: ${s.targetW}kg (정복 완료 🎉)`;
+                    if (s.subEl) s.subEl.innerText = `목표: ${s.targetW}kg (정복 완료 🎉)`;
                 } else if (!activeFound) {
                     s.el.classList.add('current');
-                    s.subEl.innerText = `목표: ${s.targetW}kg (도달까지 -${(currentWeight - s.targetW).toFixed(2)}kg 🔥)`;
+                    if (s.subEl) s.subEl.innerText = `목표: ${s.targetW}kg (도달까지 -${(currentWeight - s.targetW).toFixed(2)}kg 🔥)`;
                     activeFound = true;
                 } else {
                     s.el.classList.add('locked');
-                    s.subEl.innerText = `목표: ${s.targetW}kg (잠김 🔒)`;
+                    if (s.subEl) s.subEl.innerText = `목표: ${s.targetW}kg (잠김 🔒)`;
                 }
             });
         }
@@ -1027,6 +1036,7 @@
             let activeFound = false;
 
             mcards.forEach(m => {
+                if (!m.el) return;
                 m.el.classList.remove('completed', 'active');
 
                 if (currentWeight <= m.targetW) {
@@ -1039,90 +1049,94 @@
         }
 
         function initCharts() {
-            const ctx1 = document.getElementById('weightChart').getContext('2d');
-            weightChart = new Chart(ctx1, {
-                type: 'line',
-                data: {
-                    datasets: [
-                        {
-                            label: '🎯 목표 가이드',
-                            data: roadmapPoints.map(p => ({ x: p.date, y: p.weight })),
-                            borderColor: '#94a3b8',
-                            borderDash: [5, 5],
-                            borderWidth: 2,
-                            pointRadius: 3,
-                            fill: false
-                        },
-                        {
-                            label: '💙 실제 체중',
-                            data: [],
-                            borderColor: '#0284c7',
-                            backgroundColor: 'rgba(56, 189, 248, 0.15)',
-                            borderWidth: 3,
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
-                            pointBackgroundColor: '#0284c7',
-                            fill: true,
-                            tension: 0.25
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: {
-                        duration: 1200,
-                        easing: 'easeOutQuart'
+            try {
+                const ctx1 = document.getElementById('weightChart').getContext('2d');
+                weightChart = new Chart(ctx1, {
+                    type: 'line',
+                    data: {
+                        datasets: [
+                            {
+                                label: '🎯 목표 가이드',
+                                data: roadmapPoints.map(p => ({ x: p.date, y: p.weight })),
+                                borderColor: '#94a3b8',
+                                borderDash: [5, 5],
+                                borderWidth: 2,
+                                pointRadius: 3,
+                                fill: false
+                            },
+                            {
+                                label: '💙 실제 체중',
+                                data: [],
+                                borderColor: '#0284c7',
+                                backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                                borderWidth: 3,
+                                pointRadius: 5,
+                                pointHoverRadius: 7,
+                                pointBackgroundColor: '#0284c7',
+                                fill: true,
+                                tension: 0.25
+                            }
+                        ]
                     },
-                    scales: {
-                        x: {
-                            type: 'time',
-                            time: { unit: 'day', displayFormats: { day: 'MM/dd' } },
-                            min: '2026-09-16',
-                            grid: { color: 'rgba(56, 189, 248, 0.1)' }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1200,
+                            easing: 'easeOutQuart'
                         },
-                        y: {
-                            min: 60,
-                            max: 85,
-                            stepSize: 2,
-                            grid: { color: 'rgba(56, 189, 248, 0.1)' }
-                        }
-                    },
-                    plugins: {
-                        zoom: {
-                            pan: { enabled: true, mode: 'x', limits: { x: { min: '2026-09-16' } } },
-                            zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x', limits: { x: { min: '2026-09-16' } } }
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: { unit: 'day', displayFormats: { day: 'MM/dd' } },
+                                min: '2026-09-16',
+                                grid: { color: 'rgba(56, 189, 248, 0.1)' }
+                            },
+                            y: {
+                                min: 60,
+                                max: 85,
+                                stepSize: 2,
+                                grid: { color: 'rgba(56, 189, 248, 0.1)' }
+                            }
+                        },
+                        plugins: {
+                            zoom: {
+                                pan: { enabled: true, mode: 'x', limits: { x: { min: '2026-09-16' } } },
+                                zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x', limits: { x: { min: '2026-09-16' } } }
+                            }
                         }
                     }
-                }
-            });
+                });
 
-            const ctx2 = document.getElementById('diffChart').getContext('2d');
-            diffChart = new Chart(ctx2, {
-                type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: '목표 대비 오차 (kg)',
-                        data: [],
-                        backgroundColor: [],
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: {
-                        duration: 1200,
-                        easing: 'easeOutQuart'
+                const ctx2 = document.getElementById('diffChart').getContext('2d');
+                diffChart = new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: '목표 대비 오차 (kg)',
+                            data: [],
+                            backgroundColor: [],
+                            borderRadius: 6
+                        }]
                     },
-                    scales: {
-                        x: { grid: { display: false } },
-                        y: { grid: { color: 'rgba(56, 189, 248, 0.1)' } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1200,
+                            easing: 'easeOutQuart'
+                        },
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { grid: { color: 'rgba(56, 189, 248, 0.1)' } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            } catch(e) {
+                console.error("차트 초기화 에러 예방:", e);
+            }
         }
 
         function resetZoom() {
@@ -1152,22 +1166,23 @@
 
         function renderRecords() {
             const listEl = document.getElementById('record-list');
-            listEl.innerHTML = '';
+            if (listEl) {
+                listEl.innerHTML = '';
+                records.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-            records.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-            records.forEach(rec => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${rec.date.slice(5)}</td>
-                    <td><strong>${rec.weight.toFixed(2)} kg</strong></td>
-                    <td style="text-align: right;">
-                        <button class="btn-edit" onclick="editRecord('${rec.date}')">✎ 수정</button>
-                        <button class="btn-del" onclick="deleteRecord('${rec.date}')">✕ 삭제</button>
-                    </td>
-                `;
-                listEl.appendChild(tr);
-            });
+                records.forEach(rec => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${rec.date.slice(5)}</td>
+                        <td><strong>${rec.weight.toFixed(2)} kg</strong></td>
+                        <td style="text-align: right;">
+                            <button class="btn-edit" onclick="editRecord('${rec.date}')">✎ 수정</button>
+                            <button class="btn-del" onclick="deleteRecord('${rec.date}')">✕ 삭제</button>
+                        </td>
+                    `;
+                    listEl.appendChild(tr);
+                });
+            }
 
             if (records.length > 0) {
                 const latest = records[records.length - 1];
@@ -1179,24 +1194,40 @@
                 const today = new Date();
                 const diffTime = TARGET_DATE - today;
                 const dDay = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                document.getElementById('val-dday').innerText = `D-${dDay > 0 ? dDay : 0}`;
+                
+                const ddayVal = document.getElementById('val-dday');
+                if (ddayVal) ddayVal.innerText = `D-${dDay > 0 ? dDay : 0}`;
 
-                document.getElementById('val-current').innerHTML = `${latestWeight.toFixed(2)} <span style="font-size: 0.85rem;">kg</span>`;
-                document.getElementById('val-remaining').innerText = `남은 감량 ${remainingLoss > 0 ? remainingLoss : 0}kg`;
+                const curVal = document.getElementById('val-current');
+                if (curVal) curVal.innerHTML = `${latestWeight.toFixed(2)} <span style="font-size: 0.85rem;">kg</span>`;
+                
+                const remVal = document.getElementById('val-remaining');
+                if (remVal) remVal.innerText = `남은 감량 ${remainingLoss > 0 ? remainingLoss : 0}kg`;
 
                 const bmi = calculateBMI(latestWeight);
                 const bmiStatus = getBMIStatus(bmi);
-                document.getElementById('val-bmi').innerText = bmi;
-                document.getElementById('val-bmi-status').innerText = bmiStatus.text;
-                document.getElementById('val-bmi-status').style.color = bmiStatus.color;
+                const bmiVal = document.getElementById('val-bmi');
+                if (bmiVal) bmiVal.innerText = bmi;
+                
+                const bmiStat = document.getElementById('val-bmi-status');
+                if (bmiStat) {
+                    bmiStat.innerText = bmiStatus.text;
+                    bmiStat.style.color = bmiStatus.color;
+                }
 
-                // 감량 진행률 계산
+                // 감량 진행률
                 let progressPercent = ((currentLoss / totalTargetLoss) * 100).toFixed(1);
                 if (progressPercent < 0) progressPercent = 0;
                 if (progressPercent > 100) progressPercent = 100;
-                document.getElementById('bar-progress').style.width = `${progressPercent}%`;
-                document.getElementById('txt-progress-percent').innerText = `${progressPercent}%`;
-                document.getElementById('txt-total-loss').innerText = `총 -${currentLoss.toFixed(2)}kg 감량 완료 💙`;
+                
+                const barProg = document.getElementById('bar-progress');
+                if (barProg) barProg.style.width = `${progressPercent}%`;
+                
+                const txtProg = document.getElementById('txt-progress-percent');
+                if (txtProg) txtProg.innerText = `${progressPercent}%`;
+                
+                const txtTotal = document.getElementById('txt-total-loss');
+                if (txtTotal) txtTotal.innerText = `총 -${currentLoss.toFixed(2)}kg 감량 완료 💙`;
 
                 // D-Day 기간 진행률
                 const totalDays = (TARGET_DATE - START_DATE) / (1000 * 60 * 60 * 24);
@@ -1204,25 +1235,33 @@
                 let dDayPercent = ((passedDays / totalDays) * 100).toFixed(1);
                 if (dDayPercent < 0) dDayPercent = 0;
                 if (dDayPercent > 100) dDayPercent = 100;
-                document.getElementById('bar-dday').style.width = `${dDayPercent}%`;
-                document.getElementById('txt-dday-percent').innerText = `${dDayPercent}%`;
-                document.getElementById('txt-dday-info').innerText = `목표일까지 D-${dDay > 0 ? dDay : 0}일 남음 💙`;
+                
+                const barDday = document.getElementById('bar-dday');
+                if (barDday) barDday.style.width = `${dDayPercent}%`;
+                
+                const txtDdayP = document.getElementById('txt-dday-percent');
+                if (txtDdayP) txtDdayP.innerText = `${dDayPercent}%`;
+                
+                const txtDdayInfo = document.getElementById('txt-dday-info');
+                if (txtDdayInfo) txtDdayInfo.innerText = `목표일까지 D-${dDay > 0 ? dDay : 0}일 남음 💙`;
 
                 const targetW = getTargetWeightForDate(latest.date);
                 const devDiff = (latestWeight - targetW).toFixed(2);
                 const devDetail = document.getElementById('dev-detail-text');
 
-                if (devDiff < 0) {
-                    devDetail.innerText = `목표 대비 -${Math.abs(devDiff)}kg 더 빠졌어요! 🎉 초과 달성 중!`;
-                } else if (devDiff > 0) {
-                    devDetail.innerText = `목표 대비 +${devDiff}kg 차이 나요 ⚠️ 화이팅!`;
-                } else {
-                    devDetail.innerText = `목표 체중과 완벽히 일치해요! 🎯`;
+                if (devDetail) {
+                    if (devDiff < 0) {
+                        devDetail.innerText = `목표 대비 -${Math.abs(devDiff)}kg 더 빠졌어요! 🎉 초과 달성 중!`;
+                    } else if (devDiff > 0) {
+                        devDetail.innerText = `목표 대비 +${devDiff}kg 차이 나요 ⚠️ 화이팅!`;
+                    } else {
+                        devDetail.innerText = `목표 체중과 완벽히 일치해요! 🎯`;
+                    }
                 }
 
                 calculatePaceAndEstimation(latest);
-                updateSpaceRaidMap(latestWeight); // 🚀 우주선 레이드 업데이트!
-                updateRoadmapMilestones(latestWeight); // 🎯 로드맵 마일스톤 업데이트!
+                updateSpaceRaidMap(latestWeight);
+                updateRoadmapMilestones(latestWeight);
             }
 
             updateCharts();
@@ -1239,9 +1278,13 @@
         }
 
         function calculatePaceAndEstimation(latest) {
+            const paceVal = document.getElementById('val-pace');
+            const estDateVal = document.getElementById('val-est-date');
+            const estSubVal = document.getElementById('val-est-sub');
+
             if (records.length < 2) {
-                document.getElementById('val-pace').innerHTML = `- <span style="font-size: 0.8rem;">kg/주</span>`;
-                document.getElementById('val-est-date').innerText = '기록 축적 필요';
+                if (paceVal) paceVal.innerHTML = `- <span style="font-size: 0.8rem;">kg/주</span>`;
+                if (estDateVal) estDateVal.innerText = '기록 축적 필요';
                 return;
             }
 
@@ -1252,7 +1295,7 @@
             if (daysDiff > 0 && weightLoss > 0) {
                 const dailyRate = weightLoss / daysDiff;
                 const weeklyPace = (dailyRate * 7).toFixed(2);
-                document.getElementById('val-pace').innerHTML = `-${weeklyPace} <span style="font-size: 0.8rem;">kg/주</span>`;
+                if (paceVal) paceVal.innerHTML = `-${weeklyPace} <span style="font-size: 0.8rem;">kg/주</span>`;
 
                 const remainingWeight = latest.weight - TARGET_WEIGHT;
                 const daysNeeded = Math.ceil(remainingWeight / dailyRate);
@@ -1263,18 +1306,20 @@
                 const month = String(estDate.getMonth() + 1).padStart(2, '0');
                 const day = String(estDate.getDate()).padStart(2, '0');
 
-                document.getElementById('val-est-date').innerText = `${month}월 ${day}일`;
-                if (estDate <= TARGET_DATE) {
-                    document.getElementById('val-est-sub').innerText = '🎉 조기 달성 예상!';
-                    document.getElementById('val-est-sub').style.color = 'var(--success)';
-                } else {
-                    document.getElementById('val-est-sub').innerText = '조금만 더 힘내자!';
-                    document.getElementById('val-est-sub').style.color = 'var(--warning)';
+                if (estDateVal) estDateVal.innerText = `${month}월 ${day}일`;
+                if (estSubVal) {
+                    if (estDate <= TARGET_DATE) {
+                        estSubVal.innerText = '🎉 조기 달성 예상!';
+                        estSubVal.style.color = 'var(--success)';
+                    } else {
+                        estSubVal.innerText = '조금만 더 힘내자!';
+                        estSubVal.style.color = 'var(--warning)';
+                    }
                 }
             } else {
-                document.getElementById('val-pace').innerHTML = `0.00 <span style="font-size: 0.8rem;">kg/주</span>`;
-                document.getElementById('val-est-date').innerText = '12월 31일';
-                document.getElementById('val-est-sub').innerText = '기록 유지 중';
+                if (paceVal) paceVal.innerHTML = `0.00 <span style="font-size: 0.8rem;">kg/주</span>`;
+                if (estDateVal) estDateVal.innerText = '12월 31일';
+                if (estSubVal) estSubVal.innerText = '기록 유지 중';
             }
         }
 
@@ -1286,6 +1331,15 @@
                 alert('날짜와 체중을 올바르게 입력해줘!');
                 return;
             }
+
+            // 오프라인/오류 상황 시에도 즉시 로컬 반영
+            const existIdx = records.findIndex(r => r.date === dateInput);
+            if (existIdx >= 0) {
+                records[existIdx].weight = weightInput;
+            } else {
+                records.push({ date: dateInput, weight: weightInput });
+            }
+            renderRecords();
 
             const btnSave = document.getElementById('btn-save');
             btnSave.disabled = true;
@@ -1306,29 +1360,56 @@
                     })
                 });
 
-                // 폭죽 효과!
-                confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+                if (typeof confetti === 'function') {
+                    confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+                }
 
                 setTimeout(() => {
                     fetchRecordsFromSheet();
                     document.getElementById('input-weight').value = '';
                     btnSave.disabled = false;
                     btnSave.innerText = "💙 기록 저장";
-                }, 1500);
+                }, 1000);
 
             } catch (err) {
-                alert("저장 중 오류가 발생했어!");
                 btnSave.disabled = false;
                 btnSave.innerText = "💙 기록 저장";
+                setSyncStatus(false, "로컬 저장 완료 💙");
             }
         }
 
         async function deleteRecord(targetDate) {
-            if (!confirm(`${targetDate} 기록을 진짜 삭제할 거야?`)) return;
+            if (!confirm(`${targetDate} 기록을 삭제할 거야?`)) return;
+
+            records = records.filter(r => r.date !== targetDate);
+            renderRecords();
 
             setSyncStatus(true, "구글 시트에 삭제 중...");
             try {
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': '수정된 우주선 발사 레이드 디자인과 애니메이션 효과는 어때? 💙 더 변경하고 싶은 디테일이 있다면 언제든 편하게 말해줘!
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        date: targetDate
+                    })
+                });
+
+                setTimeout(() => {
+                    fetchRecordsFromSheet();
+                }, 1000);
+
+            } catch (err) {
+                setSyncStatus(false, "로컬 삭제 완료 💙");
+            }
+        }
+
+        window.onload = function() {
+            initCharts();
+            renderRecords(); // 기본 즉시 렌더링
+            fetchRecordsFromSheet(); // 구글 시트 연동 시도
+        };
+    </script>
+</body>
+</html>

@@ -3,26 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎀 승민이의 65kg 목표 달성 스마트 트래커 🎀</title>
+    <title>💙 차유 다이어트 목표 달성 스마트 트래커 💙</title>
     <!-- Chart.js 및 날짜/zoom 플러그인 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
-    <!-- Google Fonts Gamja Flower & Noto Sans KR -->
+    <!-- Google Fonts Noto Sans KR -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #fff0f5;
-            --card-bg: rgba(255, 255, 255, 0.85);
-            --card-border: #fbcfe8;
-            --text-main: #4a0e17;
-            --text-muted: #9d4b6c;
-            --accent-primary: #ec4899;
-            --accent-soft: #f472b6;
-            --accent-glow: rgba(236, 72, 153, 0.25);
+            --bg: #e0f2fe;
+            --card-bg: rgba(255, 255, 255, 0.88);
+            --card-border: #bae6fd;
+            --text-main: #0c4a6e;
+            --text-muted: #0369a1;
+            --accent-primary: #0284c7;
+            --accent-soft: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.25);
             --success: #10b981;
             --success-bg: #d1fae5;
             --warning: #f59e0b;
@@ -37,99 +37,107 @@
             font-family: 'Noto Sans KR', -apple-system, sans-serif;
         }
 
+        html, body {
+            height: 100vh;
+            overflow: hidden; /* 한 화면 고정 (스크롤 최소화) */
+        }
+
         body {
-            background: linear-gradient(135deg, #fce7f3 0%, #f3e8ff 50%, #e0e7ff 100%);
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #e0e7ff 100%);
             color: var(--text-main);
-            line-height: 1.5;
-            padding: 20px;
-            min-height: 100vh;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
         }
 
         .dashboard-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 10px;
         }
 
-        /* Top Header */
+        /* Compact Top Header */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: var(--card-bg);
-            backdrop-filter: blur(16px);
+            backdrop-filter: blur(12px);
             border: 2px solid var(--card-border);
-            padding: 20px 28px;
-            border-radius: 24px;
-            box-shadow: 0 10px 25px rgba(244, 114, 182, 0.15);
+            padding: 10px 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.12);
+            flex-shrink: 0;
         }
 
         .header-title h1 {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 700;
-            color: #831843;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-title p {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        .sync-status {
-            font-size: 0.85rem;
-            color: var(--text-muted);
+            color: #0369a1;
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255, 255, 255, 0.6);
-            padding: 8px 14px;
-            border-radius: 20px;
+        }
+
+        .header-title p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .sync-status {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 4px 12px;
+            border-radius: 16px;
             border: 1px solid var(--card-border);
         }
 
         .status-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: var(--warning);
         }
 
         .status-dot.active {
             background: var(--success);
-            box-shadow: 0 0 10px var(--success);
+            box-shadow: 0 0 8px var(--success);
         }
 
-        /* Cute Tab Navigation Header */
+        /* Cute Tab Navigation */
         nav.tab-nav {
             display: flex;
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.5);
-            padding: 8px;
-            border-radius: 20px;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 4px;
+            border-radius: 14px;
             border: 2px solid var(--card-border);
+            flex-shrink: 0;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 12px;
+            padding: 8px;
             border: none;
             background: transparent;
             color: var(--text-muted);
             font-weight: 700;
-            font-size: 0.95rem;
-            border-radius: 14px;
+            font-size: 0.85rem;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .tab-btn:hover {
@@ -140,103 +148,95 @@
         .tab-btn.active {
             background: #ffffff;
             color: var(--accent-primary);
-            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2);
-            transform: translateY(-2px);
+            box-shadow: 0 2px 10px rgba(56, 189, 248, 0.2);
         }
 
-        /* Page Content Animation */
+        /* Tab Page Containers */
         .tab-page {
             display: none;
-            animation: fadeIn 0.4s ease-in-out forwards;
+            flex: 1;
+            min-height: 0; /* Overflow 지렛대 */
         }
 
         .tab-page.active {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            gap: 10px;
         }
 
         /* Metric Banner Cards */
         .metrics-banner {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 16px;
+            gap: 10px;
+            flex-shrink: 0;
         }
 
         .metric-card {
             background: var(--card-bg);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(10px);
             border: 2px solid var(--card-border);
-            padding: 18px 20px;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(244, 114, 182, 0.08);
-            transition: transform 0.2s ease;
-        }
-
-        .metric-card:hover {
-            transform: translateY(-3px);
+            padding: 10px 14px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.06);
         }
 
         .metric-card .label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: var(--text-muted);
         }
 
         .metric-card .value {
-            font-size: 1.6rem;
+            font-size: 1.35rem;
             font-weight: 700;
-            color: #831843;
-            margin: 6px 0 2px 0;
+            color: #0369a1;
+            margin: 2px 0;
         }
 
         .metric-card .sub {
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             color: var(--text-muted);
-            font-weight: 500;
         }
 
-        /* Cute Layout Card Component */
+        /* Cute Card Layout */
         .card {
             background: var(--card-bg);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(10px);
             border: 2px solid var(--card-border);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 10px 25px rgba(244, 114, 182, 0.08);
+            border-radius: 16px;
+            padding: 14px 18px;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.06);
+            display: flex;
+            flex-direction: column;
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 18px;
+            margin-bottom: 8px;
+            flex-shrink: 0;
         }
 
         .card-title {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             font-weight: 700;
-            color: #831843;
+            color: #0369a1;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .btn-reset-zoom {
             background: #ffffff;
             border: 1px solid var(--card-border);
             color: var(--accent-primary);
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 0.78rem;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 0.72rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .btn-reset-zoom:hover {
@@ -246,145 +246,157 @@
 
         .chart-box {
             position: relative;
-            height: 320px;
+            flex: 1;
             width: 100%;
+            min-height: 0;
+        }
+
+        /* 💙 추가된 감량 진행률 & D-Day 귀여운 세로 진행 바 💙 */
+        .top-progress-section {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid var(--card-border);
+            border-radius: 16px;
+            padding: 10px 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .progress-box-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .progress-label-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #0369a1;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 12px;
+            background: #e0f2fe;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #38bdf8, #0284c7);
+            border-radius: 10px;
+            transition: width 0.6s ease;
         }
 
         /* Input Controls */
         .input-row {
             display: grid;
             grid-template-columns: 1fr 1fr auto;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
         }
 
         input {
             background: #ffffff;
             border: 2px solid var(--card-border);
             color: var(--text-main);
-            padding: 12px 16px;
-            border-radius: 14px;
-            font-size: 0.9rem;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
             outline: none;
-            transition: border-color 0.2s;
         }
 
-        input:focus {
-            border-color: var(--accent-primary);
-        }
+        input:focus { border-color: var(--accent-primary); }
 
         .btn-submit {
-            background: linear-gradient(135deg, #f472b6, #ec4899);
+            background: linear-gradient(135deg, #38bdf8, #0284c7);
             color: #ffffff;
             border: none;
-            padding: 12px 24px;
-            border-radius: 14px;
+            padding: 10px 20px;
+            border-radius: 12px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
-            transition: all 0.2s;
-        }
-
-        .btn-submit:hover {
-            opacity: 0.95;
-            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.2);
         }
 
         /* Table */
         .table-wrap {
-            overflow-x: auto;
-            max-height: 360px;
             overflow-y: auto;
+            flex: 1;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
-            text-align: left;
+            font-size: 0.85rem;
         }
 
         th {
             position: sticky;
             top: 0;
-            background: #fbcfe8;
-            color: #831843;
+            background: #bae6fd;
+            color: #0369a1;
             font-weight: 700;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 8px 12px;
         }
 
         td {
-            padding: 12px;
+            padding: 8px 12px;
             border-bottom: 1px solid var(--card-border);
         }
 
         .btn-edit, .btn-del {
             border: none;
-            padding: 4px 10px;
-            border-radius: 8px;
+            padding: 3px 8px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
         }
 
         .btn-edit { background: #e0e7ff; color: #4338ca; margin-right: 4px; }
         .btn-del { background: #ffe4e6; color: #e11d48; }
 
-        /* Progress & BMI */
-        .progress-track {
-            width: 100%;
-            height: 14px;
-            background: #fbcfe8;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #f472b6, #10b981);
-            border-radius: 20px;
-            transition: width 0.6s ease;
-        }
-
+        /* BMI Grid */
         .bmi-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin-top: 12px;
+            gap: 8px;
+            margin-top: 8px;
         }
 
         .bmi-item {
             background: #ffffff;
             border: 2px solid var(--card-border);
-            border-radius: 14px;
-            padding: 12px 8px;
+            border-radius: 12px;
+            padding: 8px 4px;
             text-align: center;
         }
 
         .bmi-item.active {
             border-color: var(--accent-primary);
-            background: #ffe4e6;
-            transform: scale(1.03);
+            background: #e0f2fe;
+            transform: scale(1.02);
         }
 
-        .roadmap-list { display: flex; flex-direction: column; gap: 12px; }
+        .roadmap-list { display: flex; flex-direction: column; gap: 8px; }
         .roadmap-item {
             display: flex;
             justify-content: space-between;
-            padding: 14px 18px;
+            padding: 10px 14px;
             background: #ffffff;
             border: 2px solid var(--card-border);
-            border-radius: 14px;
-            font-size: 0.9rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
             font-weight: 600;
-        }
-
-        @media (max-width: 900px) {
-            .metrics-banner { grid-template-columns: repeat(2, 1fr); }
-            .input-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -394,8 +406,8 @@
         <!-- Header -->
         <header>
             <div class="header-title">
-                <h1>🎀 승민이의 65kg 목표 감량 트래커</h1>
-                <p>신장 173.5cm | 시작 82.25kg ➡️ 최종 목표 65.0kg 💕</p>
+                <h1>💙 승민이의 65kg 목표 감량 트래커 💙</h1>
+                <p>신장 173.5cm | 시작 82.25kg ➡️ 최종 목표 65.0kg 💙</p>
             </div>
             <div class="sync-status">
                 <div class="status-dot" id="status-dot"></div>
@@ -403,7 +415,36 @@
             </div>
         </header>
 
-        <!-- 귀여운 탭 메뉴 (페이지 구분 기능) -->
+        <!-- 💙 감량 진행률 및 D-Day 카운트 세로 진행 바 (상단배치!) 💙 -->
+        <div class="top-progress-section">
+            <div class="progress-box-item">
+                <div class="progress-label-row">
+                    <span>💙 총 감량 진행률</span>
+                    <span id="txt-progress-percent" style="color: var(--accent-primary);">0.0%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="bar-progress"></div>
+                </div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); text-align: right;" id="txt-total-loss">
+                    총 -0.00kg 감량 완료 💙
+                </div>
+            </div>
+
+            <div class="progress-box-item">
+                <div class="progress-label-row">
+                    <span>⏳ 남은 기간 대비 감량 여정 (D-Day)</span>
+                    <span id="txt-dday-percent" style="color: var(--accent-primary);">0.0%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="bar-dday" style="background: linear-gradient(90deg, #38bdf8, #10b981);"></div>
+                </div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); text-align: right;" id="txt-dday-info">
+                    목표일까지 D-100 남음 💙
+                </div>
+            </div>
+        </div>
+
+        <!-- 파스텔 하늘색 탭 메뉴 -->
         <nav class="tab-nav">
             <button class="tab-btn active" onclick="switchTab('tab-dashboard', this)">
                 <span>📊</span> 메인 대시보드
@@ -412,7 +453,7 @@
                 <span>📝</span> 체중 기록 & 관리
             </button>
             <button class="tab-btn" onclick="switchTab('tab-roadmap', this)">
-                <span>🎯</span> 로드맵 & 목표 분석
+                <span>🎯</span> 로드맵 & 체형 분석
             </button>
         </nav>
 
@@ -420,8 +461,8 @@
         <div id="tab-dashboard" class="tab-page active">
             <div class="metrics-banner">
                 <div class="metric-card">
-                    <div class="label">현재 체중 🌸</div>
-                    <div class="value" id="val-current">--.-- <span style="font-size: 1rem;">kg</span></div>
+                    <div class="label">현재 체중 💙</div>
+                    <div class="value" id="val-current">--.-- <span style="font-size: 0.9rem;">kg</span></div>
                     <div class="sub" id="val-remaining">남은 감량 --kg</div>
                 </div>
                 <div class="metric-card">
@@ -436,78 +477,37 @@
                 </div>
                 <div class="metric-card">
                     <div class="label">주간 감량 속도 ⚡</div>
-                    <div class="value" id="val-pace">- <span style="font-size: 0.9rem;">kg/주</span></div>
+                    <div class="value" id="val-pace">- <span style="font-size: 0.85rem;">kg/주</span></div>
                     <div class="sub">최근 7일 기준</div>
                 </div>
                 <div class="metric-card">
                     <div class="label">예상 달성일 🎉</div>
-                    <div class="value" id="val-est-date" style="font-size: 1.25rem;">계산 중...</div>
+                    <div class="value" id="val-est-date" style="font-size: 1.15rem;">계산 중...</div>
                     <div class="sub" id="val-est-sub">현재 페이스 기준</div>
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card" style="flex: 1; min-height: 0;">
                 <div class="card-header">
-                    <div class="card-title">📈 체중 감량 추이 그래프</div>
+                    <div class="card-title">📈 체중 감량 추이 그래프 💙</div>
                     <button class="btn-reset-zoom" onclick="resetZoom()">🔍 Zoom 초기화</button>
                 </div>
                 <div class="chart-box">
                     <canvas id="weightChart"></canvas>
                 </div>
             </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">📊 감량 진행률 및 BMI 체형 진단</div>
-                </div>
-                <div class="progress-box" style="margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 6px;">
-                        <span>총 감량 달성률</span>
-                        <span id="txt-progress-percent" style="color: var(--accent-primary);">0.0%</span>
-                    </div>
-                    <div class="progress-track">
-                        <div class="progress-fill" id="bar-progress"></div>
-                    </div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); text-align: right; margin-top: 6px;" id="txt-total-loss">
-                        총 -0.00kg 감량 완료
-                    </div>
-                </div>
-
-                <div class="bmi-grid">
-                    <div class="bmi-item" id="bmi-under">
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">&lt;18.5</div>
-                        <div style="font-weight: 700; color: #0284c7;">저체중</div>
-                    </div>
-                    <div class="bmi-item" id="bmi-normal">
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">18.5-22.9</div>
-                        <div style="font-weight: 700; color: #059669;">정상</div>
-                    </div>
-                    <div class="bmi-item" id="bmi-over">
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">23.0-24.9</div>
-                        <div style="font-weight: 700; color: #d97706;">과체중</div>
-                    </div>
-                    <div class="bmi-item" id="bmi-obese1">
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">25.0-29.9</div>
-                        <div style="font-weight: 700; color: #e11d48;">1단계비만</div>
-                    </div>
-                    <div class="bmi-item" id="bmi-obese2">
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">&ge;30.0</div>
-                        <div style="font-weight: 700; color: #9f1239;">2단계비만</div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- PAGE 2: 체중 기록 & 관리 -->
         <div id="tab-records" class="tab-page">
-            <div class="card">
+            <div class="card" style="flex: 1; min-height: 0;">
                 <div class="card-header">
-                    <div class="card-title">📝 체중 기록하기</div>
+                    <div class="card-title">📝 체중 기록하기 💙</div>
                 </div>
                 <div class="input-row">
                     <input type="date" id="input-date">
                     <input type="number" step="0.01" id="input-weight" placeholder="몸무게 입력 (kg)">
-                    <button class="btn-submit" id="btn-save" onclick="addRecord()">💖 기록 저장</button>
+                    <button class="btn-submit" id="btn-save" onclick="addRecord()">💙 기록 저장</button>
                 </div>
 
                 <div class="table-wrap">
@@ -525,26 +525,49 @@
             </div>
         </div>
 
-        <!-- PAGE 3: 로드맵 & 목표 분석 -->
+        <!-- PAGE 3: 로드맵 & 체형 분석 -->
         <div id="tab-roadmap" class="tab-page">
-            <div class="card">
+            <div class="card" style="flex: 1; min-height: 0;">
                 <div class="card-header">
-                    <div class="card-title">⚖️ 로드맵 목표 대비 성과 분석</div>
+                    <div class="card-title">⚖️ 로드맵 목표 대비 성과 분석 💙</div>
                 </div>
-                <div style="margin-bottom: 16px; background: #fff5f8; padding: 14px; border-radius: 16px; border: 1px solid var(--card-border);">
-                    <div id="dev-detail-text" style="font-size: 1.1rem; font-weight: 700; color: #831843;">
+                <div style="margin-bottom: 10px; background: #f0f9ff; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--card-border);">
+                    <div id="dev-detail-text" style="font-size: 1rem; font-weight: 700; color: #0369a1;">
                         데이터 불러오는 중...
                     </div>
                 </div>
-                <div class="chart-box" style="height: 240px;">
+                <div class="chart-box" style="flex: 1; min-height: 0;">
                     <canvas id="diffChart"></canvas>
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card" style="flex-shrink: 0;">
                 <div class="card-header">
-                    <div class="card-title">🗺️ 단계별 로드맵 목표</div>
+                    <div class="card-title">📊 BMI 체형 진단 & 🗺️ 단계별 로드맵</div>
                 </div>
+                <div class="bmi-grid" style="margin-bottom: 12px;">
+                    <div class="bmi-item" id="bmi-under">
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">&lt;18.5</div>
+                        <div style="font-weight: 700; color: #0284c7;">저체중</div>
+                    </div>
+                    <div class="bmi-item" id="bmi-normal">
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">18.5-22.9</div>
+                        <div style="font-weight: 700; color: #059669;">정상</div>
+                    </div>
+                    <div class="bmi-item" id="bmi-over">
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">23.0-24.9</div>
+                        <div style="font-weight: 700; color: #d97706;">과체중</div>
+                    </div>
+                    <div class="bmi-item" id="bmi-obese1">
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">25.0-29.9</div>
+                        <div style="font-weight: 700; color: #e11d48;">1단계비만</div>
+                    </div>
+                    <div class="bmi-item" id="bmi-obese2">
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">&ge;30.0</div>
+                        <div style="font-weight: 700; color: #9f1239;">2단계비만</div>
+                    </div>
+                </div>
+
                 <div class="roadmap-list">
                     <div class="roadmap-item">
                         <span>🌱 1단계 (9월 말)</span>
@@ -560,7 +583,7 @@
                     </div>
                     <div class="roadmap-item" style="background: #f0fdf4; border-color: #bbf7d0;">
                         <span style="color: #166534;">👑 4단계 최종 목표 (12월 말) 🎉</span>
-                        <span style="color: #15803d; font-size: 1.05rem;">65.0 kg</span>
+                        <span style="color: #15803d; font-size: 0.95rem;">65.0 kg</span>
                     </div>
                 </div>
             </div>
@@ -568,10 +591,11 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_HfsHsl_AY3b83R0xbjm1bkna2ox_QZvDlFbJ5MifumO4EMIyRlEvonncL_YC3cml/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxW8JZAneCsMulsdR0qZ1-BdOqe8fs75hlSmpPH_Py1BzkNg8OSmJyRspuOloOFzAKL/exec";
         const HEIGHT_CM = 173.5;
         const INITIAL_WEIGHT = 82.25;
         const TARGET_WEIGHT = 65.0;
+        const START_DATE = new Date('2026-09-16');
         const TARGET_DATE = new Date('2026-12-31');
 
         const roadmapPoints = [
@@ -588,7 +612,6 @@
         let weightChart = null;
         let diffChart = null;
 
-        // 탭 전환 핸들러
         function switchTab(tabId, btnEl) {
             document.querySelectorAll('.tab-page').forEach(page => page.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -617,7 +640,7 @@
                 if (Array.isArray(data)) {
                     records = data;
                     renderRecords();
-                    setSyncStatus(false, "동기화 완료 💕");
+                    setSyncStatus(false, "동기화 완료 💙");
                 }
             };
 
@@ -691,14 +714,14 @@
                             fill: false
                         },
                         {
-                            label: '🌸 실제 체중',
+                            label: '💙 실제 체중',
                             data: [],
-                            borderColor: '#ec4899',
-                            backgroundColor: 'rgba(236, 72, 153, 0.15)',
+                            borderColor: '#0284c7',
+                            backgroundColor: 'rgba(56, 189, 248, 0.15)',
                             borderWidth: 3,
-                            pointRadius: 6,
-                            pointHoverRadius: 8,
-                            pointBackgroundColor: '#ec4899',
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#0284c7',
                             fill: true,
                             tension: 0.25
                         }
@@ -712,13 +735,13 @@
                             type: 'time',
                             time: { unit: 'day', displayFormats: { day: 'MM/dd' } },
                             min: '2026-09-16',
-                            grid: { color: 'rgba(244, 114, 182, 0.1)' }
+                            grid: { color: 'rgba(56, 189, 248, 0.1)' }
                         },
                         y: {
                             min: 60,
                             max: 85,
                             stepSize: 2,
-                            grid: { color: 'rgba(244, 114, 182, 0.1)' }
+                            grid: { color: 'rgba(56, 189, 248, 0.1)' }
                         }
                     },
                     plugins: {
@@ -747,7 +770,7 @@
                     maintainAspectRatio: false,
                     scales: {
                         x: { grid: { display: false } },
-                        y: { grid: { color: 'rgba(244, 114, 182, 0.1)' } }
+                        y: { grid: { color: 'rgba(56, 189, 248, 0.1)' } }
                     },
                     plugins: { legend: { display: false } }
                 }
@@ -810,7 +833,7 @@
                 const dDay = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 document.getElementById('val-dday').innerText = `D-${dDay > 0 ? dDay : 0}`;
 
-                document.getElementById('val-current').innerHTML = `${latestWeight.toFixed(2)} <span style="font-size: 1rem;">kg</span>`;
+                document.getElementById('val-current').innerHTML = `${latestWeight.toFixed(2)} <span style="font-size: 0.9rem;">kg</span>`;
                 document.getElementById('val-remaining').innerText = `남은 감량 ${remainingLoss > 0 ? remainingLoss : 0}kg`;
 
                 const bmi = calculateBMI(latestWeight);
@@ -821,12 +844,23 @@
 
                 highlightBMIBox(bmiStatus.key);
 
+                // 감량 진행률 계산
                 let progressPercent = ((currentLoss / totalTargetLoss) * 100).toFixed(1);
                 if (progressPercent < 0) progressPercent = 0;
                 if (progressPercent > 100) progressPercent = 100;
                 document.getElementById('bar-progress').style.width = `${progressPercent}%`;
                 document.getElementById('txt-progress-percent').innerText = `${progressPercent}%`;
-                document.getElementById('txt-total-loss').innerText = `총 -${currentLoss.toFixed(2)}kg 감량 완료 💕`;
+                document.getElementById('txt-total-loss').innerText = `총 -${currentLoss.toFixed(2)}kg 감량 완료 💙`;
+
+                // 💙 D-Day 기간 진행률 계산 및 업데이트 💙
+                const totalDays = (TARGET_DATE - START_DATE) / (1000 * 60 * 60 * 24);
+                const passedDays = (today - START_DATE) / (1000 * 60 * 60 * 24);
+                let dDayPercent = ((passedDays / totalDays) * 100).toFixed(1);
+                if (dDayPercent < 0) dDayPercent = 0;
+                if (dDayPercent > 100) dDayPercent = 100;
+                document.getElementById('bar-dday').style.width = `${dDayPercent}%`;
+                document.getElementById('txt-dday-percent').innerText = `${dDayPercent}%`;
+                document.getElementById('txt-dday-info').innerText = `목표일까지 D-${dDay > 0 ? dDay : 0}일 남음 💙`;
 
                 const targetW = getTargetWeightForDate(latest.date);
                 const devDiff = (latestWeight - targetW).toFixed(2);
@@ -858,7 +892,7 @@
 
         function calculatePaceAndEstimation(latest) {
             if (records.length < 2) {
-                document.getElementById('val-pace').innerHTML = `- <span style="font-size: 0.9rem;">kg/주</span>`;
+                document.getElementById('val-pace').innerHTML = `- <span style="font-size: 0.85rem;">kg/주</span>`;
                 document.getElementById('val-est-date').innerText = '기록 축적 필요';
                 return;
             }
@@ -870,7 +904,7 @@
             if (daysDiff > 0 && weightLoss > 0) {
                 const dailyRate = weightLoss / daysDiff;
                 const weeklyPace = (dailyRate * 7).toFixed(2);
-                document.getElementById('val-pace').innerHTML = `-${weeklyPace} <span style="font-size: 0.9rem;">kg/주</span>`;
+                document.getElementById('val-pace').innerHTML = `-${weeklyPace} <span style="font-size: 0.85rem;">kg/주</span>`;
 
                 const remainingWeight = latest.weight - TARGET_WEIGHT;
                 const daysNeeded = Math.ceil(remainingWeight / dailyRate);
@@ -890,7 +924,7 @@
                     document.getElementById('val-est-sub').style.color = 'var(--warning)';
                 }
             } else {
-                document.getElementById('val-pace').innerHTML = `0.00 <span style="font-size: 0.9rem;">kg/주</span>`;
+                document.getElementById('val-pace').innerHTML = `0.00 <span style="font-size: 0.85rem;">kg/주</span>`;
                 document.getElementById('val-est-date').innerText = '12월 31일';
                 document.getElementById('val-est-sub').innerText = '기록 유지 중';
             }
@@ -928,13 +962,13 @@
                     fetchRecordsFromSheet();
                     document.getElementById('input-weight').value = '';
                     btnSave.disabled = false;
-                    btnSave.innerText = "💖 기록 저장";
+                    btnSave.innerText = "💙 기록 저장";
                 }, 1500);
 
             } catch (err) {
                 alert("저장 중 오류가 발생했어!");
                 btnSave.disabled = false;
-                btnSave.innerText = "💖 기록 저장";
+                btnSave.innerText = "💙 기록 저장";
             }
         }
 

@@ -308,145 +308,138 @@
             min-height: 0;
         }
 
-        /* 🚶‍♂️ 횡스크롤 가로 보드게임 형태의 보스 레이드 🗺️ */
-        .raid-map-wrapper {
+        /* 🚀 우주선 발사대 수직 우주 레이드 맵 🌌 */
+        .space-raid-wrapper {
             position: relative;
-            background: #ffffff;
-            border: 2px solid var(--card-border);
-            border-radius: 16px;
-            padding: 24px 30px 20px 30px;
-            margin: auto 0;
-            box-shadow: inset 0 0 15px rgba(56, 189, 248, 0.08);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .raid-path-container {
-            position: relative;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 40px 20px;
-        }
-
-        /* 보스를 잇는 가로 길 (배경선) */
-        .raid-line-bg {
-            position: absolute;
-            top: 50%;
-            left: 50px;
-            right: 50px;
-            height: 12px;
-            background: #e2e8f0;
-            border-radius: 6px;
-            transform: translateY(-50%);
-            z-index: 1;
-        }
-
-        /* 감량 게이지 채워지는 선 */
-        .raid-line-fill {
-            position: absolute;
-            top: 50%;
-            left: 50px;
-            width: 0%;
-            height: 12px;
-            background: linear-gradient(90deg, #38bdf8, #0284c7, #10b981);
-            border-radius: 6px;
-            transform: translateY(-50%);
-            z-index: 2;
-            transition: width 0.8s ease;
-        }
-
-        /* 가로 세로 걸어가는 플레이어 캐릭터 🚶‍♂️ */
-        .player-avatar {
-            position: absolute;
-            top: 15px;
-            left: 50px;
-            transform: translateX(-50%);
-            font-size: 2.2rem;
-            z-index: 10;
-            transition: left 0.8s ease;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
-            animation: bounce 1s infinite alternate;
-        }
-
-        @keyframes bounce {
-            0% { transform: translateX(-50%) translateY(0); }
-            100% { transform: translateX(-50%) translateY(-6px); }
-        }
-
-        /* 거점 보스 노드 카드들 */
-        .boss-node {
-            position: relative;
-            z-index: 5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 130px;
-        }
-
-        .boss-icon-box {
-            width: 68px;
-            height: 68px;
-            background: #ffffff;
-            border: 3px solid #cbd5e1;
-            border-radius: 50%;
+            background: linear-gradient(180deg, #0b0f19 0%, #111827 50%, #1e293b 100%);
+            border: 2px solid #334155;
+            border-radius: 20px;
+            padding: 24px;
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(56, 189, 248, 0.15);
         }
 
-        .boss-node.cleared .boss-icon-box {
-            border-color: var(--success);
-            background: var(--success-bg);
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
-        }
-
-        .boss-node.current .boss-icon-box {
-            border-color: var(--accent-primary);
-            background: #e0f2fe;
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
-            transform: scale(1.15);
-        }
-
-        .boss-node.locked .boss-icon-box {
+        /* 별빛 배경 반짝임 */
+        .stars-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #38bdf8, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #fb7185, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
             opacity: 0.6;
+        }
+
+        .space-path-container {
+            position: relative;
+            height: 100%;
+            width: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 5;
+            padding: 20px 0;
+        }
+
+        /* 우주선 수직 수송선 로켓 궤도 */
+        .rocket-line-bg {
+            position: absolute;
+            top: 40px;
+            bottom: 40px;
+            width: 14px;
+            background: #334155;
+            border-radius: 7px;
+            z-index: 1;
+        }
+
+        .rocket-line-fill {
+            position: absolute;
+            bottom: 40px;
+            width: 14px;
+            height: 0%;
+            background: linear-gradient(0deg, #38bdf8, #818cf8, #f43f5e);
+            border-radius: 7px;
+            z-index: 2;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.8);
+            transition: height 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* 🚀 상승하는 우주선 로켓 */
+        .rocket-ship {
+            position: absolute;
+            bottom: 40px;
+            transform: translateY(50%);
+            font-size: 2.6rem;
+            z-index: 10;
+            transition: bottom 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.9));
+        }
+
+        /* 우주 행성/거점 노드 */
+        .space-node {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .space-node-card {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(8px);
+            border: 2px solid #475569;
+            border-radius: 14px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #f8fafc;
+            min-width: 260px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.4s ease;
+        }
+
+        .space-node.cleared .space-node-card {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.15);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .space-node.current .space-node-card {
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.2);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+            transform: scale(1.05);
+        }
+
+        .space-node.locked .space-node-card {
+            opacity: 0.5;
             filter: grayscale(0.8);
         }
 
-        .node-info {
-            margin-top: 10px;
-            text-align: center;
+        .planet-icon {
+            font-size: 2rem;
         }
 
-        .node-title {
-            font-size: 0.82rem;
+        .node-text-title {
+            font-size: 0.85rem;
             font-weight: 800;
-            color: #0c4a6e;
+            color: #f1f5f9;
         }
 
-        .node-target {
+        .node-text-sub {
             font-size: 0.72rem;
-            font-weight: 700;
-            color: var(--accent-primary);
+            color: #94a3b8;
         }
-
-        .node-status {
-            font-size: 0.68rem;
-            font-weight: 800;
-            margin-top: 2px;
-            padding: 2px 6px;
-            border-radius: 8px;
-            display: inline-block;
-        }
-
-        .boss-node.cleared .node-status { background: var(--success-bg); color: var(--success); }
-        .boss-node.current .node-status { background: #bae6fd; color: #0284c7; }
-        .boss-node.locked .node-status { background: #e2e8f0; color: #64748b; }
 
         /* Input Controls */
         .input-row {
@@ -518,38 +511,81 @@
         .btn-edit { background: #e0e7ff; color: #4338ca; margin-right: 4px; }
         .btn-del { background: #ffe4e6; color: #e11d48; }
 
-        /* BMI Grid */
-        .bmi-grid {
+        /* 🔥 새롭게 리뉴얼된 로드맵 분석 디자인 🔥 */
+        .roadmap-container-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
-            margin-top: 6px;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 12px;
+            flex: 1;
+            min-height: 0;
         }
 
-        .bmi-item {
+        .analysis-badge-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 2px solid var(--card-border);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .analysis-status-text {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0369a1;
+        }
+
+        .milestone-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .milestone-card {
             background: #ffffff;
             border: 2px solid var(--card-border);
-            border-radius: 10px;
-            padding: 6px 4px;
-            text-align: center;
-        }
-
-        .bmi-item.active {
-            border-color: var(--accent-primary);
-            background: #e0f2fe;
-            transform: scale(1.02);
-        }
-
-        .roadmap-list { display: flex; flex-direction: column; gap: 6px; }
-        .roadmap-item {
+            border-radius: 14px;
+            padding: 12px 14px;
             display: flex;
             justify-content: space-between;
-            padding: 8px 12px;
-            background: #ffffff;
-            border: 2px solid var(--card-border);
-            border-radius: 10px;
-            font-size: 0.82rem;
-            font-weight: 600;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .milestone-card.active {
+            border-color: var(--accent-primary);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.2);
+            background: #f0f9ff;
+        }
+
+        .milestone-card.completed {
+            border-color: var(--success);
+            background: #f0fdf4;
+        }
+
+        .milestone-info h4 {
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: #0c4a6e;
+        }
+
+        .milestone-info p {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .milestone-weight {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--accent-primary);
+        }
+
+        .milestone-card.completed .milestone-weight {
+            color: var(--success);
         }
     </style>
 </head>
@@ -567,13 +603,13 @@
                 <span>📊</span> 메인 대시보드
             </button>
             <button class="tab-btn" onclick="switchTab('tab-quest', this)">
-                <span>⚔️</span> 5kg 보스 레이드
+                <span>🚀</span> 우주 레이드 (65kg)
             </button>
             <button class="tab-btn" onclick="switchTab('tab-records', this)">
                 <span>📝</span> 체중 기록 & 관리
             </button>
             <button class="tab-btn" onclick="switchTab('tab-roadmap', this)">
-                <span>🎯</span> 로드맵 & 분석
+                <span>🎯</span> 로드맵 성과 분석
             </button>
         </nav>
 
@@ -666,68 +702,67 @@
             </div>
         </div>
 
-        <!-- PAGE 2: 🚶‍♂️ 가로 길 걸어가며 5kg 보스 격파하는 보드게임 맵 🎮 -->
+        <!-- PAGE 2: 🚀 수직으로 올라가는 우주선 수송 레이드 맵 🌌 -->
         <div id="tab-quest" class="tab-page">
-            <div class="card" style="flex: 1; min-height: 0; justify-content: center;">
-                <div class="card-header">
-                    <div class="card-title">⚔️ 5kg 단위 체중 파쇄 가로 보드게임 맵 🎮</div>
-                    <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;" id="txt-raid-status-sub">살이 빠질수록 캐릭터가 가로 길을 따라 전진해요! 🚶‍♂️</span>
-                </div>
+            <div class="space-raid-wrapper">
+                <div class="stars-bg"></div>
 
-                <div class="raid-map-wrapper">
-                    <div class="player-avatar" id="player-avatar">🚶‍♂️</div>
+                <div class="space-path-container">
+                    <div class="rocket-line-bg"></div>
+                    <div class="rocket-line-fill" id="rocket-line-fill"></div>
+                    <div class="rocket-ship" id="rocket-ship">🚀</div>
 
-                    <div class="raid-path-container">
-                        <div class="raid-line-bg"></div>
-                        <div class="raid-line-fill" id="raid-line-fill"></div>
-
-                        <!-- 82.25kg 출발점 -->
-                        <div class="boss-node cleared" id="node-start">
-                            <div class="boss-icon-box">🚩</div>
-                            <div class="node-info">
-                                <div class="node-title">START</div>
-                                <div class="node-target">82.25 kg</div>
-                                <div class="node-status">출발 완료</div>
+                    <!-- Final 65kg 최종 달성 행성 -->
+                    <div class="space-node" id="snode-4">
+                        <div class="space-node-card">
+                            <span class="planet-icon">👑</span>
+                            <div>
+                                <div class="node-text-title">FINAL: 꿈의 65.0kg 정복</div>
+                                <div class="node-text-sub" id="snode-sub-4">목표: 65.0 kg</div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Stage 1 보스 (77.0kg) -->
-                        <div class="boss-node" id="node-1">
-                            <div class="boss-icon-box">🧟‍♂️</div>
-                            <div class="node-info">
-                                <div class="node-title">80kg 중력 보스</div>
-                                <div class="node-target">77.0 kg</div>
-                                <div class="node-status" id="node-status-1">대기 중</div>
+                    <!-- 67.0kg 행성 -->
+                    <div class="space-node" id="snode-3">
+                        <div class="space-node-card">
+                            <span class="planet-icon">🪐</span>
+                            <div>
+                                <div class="node-text-title">STAGE 3: 70kg 수문장 파쇄</div>
+                                <div class="node-text-sub" id="snode-sub-3">목표: 67.0 kg</div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Stage 2 보스 (72.0kg) -->
-                        <div class="boss-node" id="node-2">
-                            <div class="boss-icon-box">🧛‍♂️</div>
-                            <div class="node-info">
-                                <div class="node-title">정체기 자극 보스</div>
-                                <div class="node-target">72.0 kg</div>
-                                <div class="node-status" id="node-status-2">대기 중</div>
+                    <!-- 72.0kg 행성 -->
+                    <div class="space-node" id="snode-2">
+                        <div class="space-node-card">
+                            <span class="planet-icon">🌕</span>
+                            <div>
+                                <div class="node-text-title">STAGE 2: 정체기 자극 지점</div>
+                                <div class="node-text-sub" id="snode-sub-2">목표: 72.0 kg</div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Stage 3 보스 (67.0kg) -->
-                        <div class="boss-node" id="node-3">
-                            <div class="boss-icon-box">🐉</div>
-                            <div class="node-info">
-                                <div class="node-title">70kg 수문장 드래곤</div>
-                                <div class="node-target">67.0 kg</div>
-                                <div class="node-status" id="node-status-3">대기 중</div>
+                    <!-- 77.0kg 행성 -->
+                    <div class="space-node" id="snode-1">
+                        <div class="space-node-card">
+                            <span class="planet-icon">☄️</span>
+                            <div>
+                                <div class="node-text-title">STAGE 1: 80kg 중력 탈출</div>
+                                <div class="node-text-sub" id="snode-sub-1">목표: 77.0 kg</div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Final 보스 (65.0kg) -->
-                        <div class="boss-node" id="node-4">
-                            <div class="boss-icon-box">👑</div>
-                            <div class="node-info">
-                                <div class="node-title">65kg 마왕</div>
-                                <div class="node-target">65.0 kg</div>
-                                <div class="node-status" id="node-status-4">대기 중</div>
+                    <!-- 출발 기지 -->
+                    <div class="space-node cleared" id="snode-start">
+                        <div class="space-node-card">
+                            <span class="planet-icon">🛰️</span>
+                            <div>
+                                <div class="node-text-title">LAUNCH PAD: 다이어트 기지</div>
+                                <div class="node-text-sub">시작: 82.25 kg 완료</div>
                             </div>
                         </div>
                     </div>
@@ -762,65 +797,63 @@
             </div>
         </div>
 
-        <!-- PAGE 4: 로드맵 & 체형 분석 -->
+        <!-- PAGE 4: 🎯 리뉴얼된 로드맵 성과 분석 페이지 -->
         <div id="tab-roadmap" class="tab-page">
-            <div class="card" style="flex: 1; min-height: 0;">
-                <div class="card-header">
-                    <div class="card-title">⚖️ 로드맵 목표 대비 성과 분석 💙</div>
-                </div>
-                <div style="margin-bottom: 8px; background: #f0f9ff; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--card-border);">
-                    <div id="dev-detail-text" style="font-size: 0.95rem; font-weight: 700; color: #0369a1;">
-                        데이터 불러오는 중...
+            <div class="roadmap-container-grid">
+                <!-- 좌측: 차트 및 실시간 분석 카드 -->
+                <div class="card" style="min-height: 0;">
+                    <div class="card-header">
+                        <div class="card-title">⚖️ 가이드 목표 대비 실제 오차 분석 💙</div>
                     </div>
-                </div>
-                <div class="chart-box" style="flex: 1; min-height: 0;">
-                    <canvas id="diffChart"></canvas>
-                </div>
-            </div>
 
-            <div class="card" style="flex-shrink: 0;">
-                <div class="card-header">
-                    <div class="card-title">📊 BMI 체형 진단 & 🗺️ 단계별 로드맵</div>
-                </div>
-                <div class="bmi-grid" style="margin-bottom: 8px;">
-                    <div class="bmi-item" id="bmi-under">
-                        <div style="font-size: 0.68rem; color: var(--text-muted);">&lt;18.5</div>
-                        <div style="font-weight: 700; color: #0284c7;">저체중</div>
+                    <div class="analysis-badge-box">
+                        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">🎯 현재 성과 상태</span>
+                        <div class="analysis-status-text" id="dev-detail-text">분석 중...</div>
                     </div>
-                    <div class="bmi-item" id="bmi-normal">
-                        <div style="font-size: 0.68rem; color: var(--text-muted);">18.5-22.9</div>
-                        <div style="font-weight: 700; color: #059669;">정상</div>
-                    </div>
-                    <div class="bmi-item" id="bmi-over">
-                        <div style="font-size: 0.68rem; color: var(--text-muted);">23.0-24.9</div>
-                        <div style="font-weight: 700; color: #d97706;">과체중</div>
-                    </div>
-                    <div class="bmi-item" id="bmi-obese1">
-                        <div style="font-size: 0.68rem; color: var(--text-muted);">25.0-29.9</div>
-                        <div style="font-weight: 700; color: #e11d48;">1단계비만</div>
-                    </div>
-                    <div class="bmi-item" id="bmi-obese2">
-                        <div style="font-size: 0.68rem; color: var(--text-muted);">&ge;30.0</div>
-                        <div style="font-weight: 700; color: #9f1239;">2단계비만</div>
+
+                    <div class="chart-box" style="flex: 1; min-height: 0;">
+                        <canvas id="diffChart"></canvas>
                     </div>
                 </div>
 
-                <div class="roadmap-list">
-                    <div class="roadmap-item">
-                        <span>🌱 1단계 (9월 말)</span>
-                        <span style="color: var(--accent-primary);">79.5 kg</span>
+                <!-- 우측: 단계별 마일스톤 가이드 -->
+                <div class="card" style="min-height: 0;">
+                    <div class="card-header">
+                        <div class="card-title">🗺️ 월별 감량 마일스톤 단계 💙</div>
                     </div>
-                    <div class="roadmap-item">
-                        <span>🌿 2단계 (10월 말)</span>
-                        <span style="color: var(--accent-primary);">74.5 kg</span>
-                    </div>
-                    <div class="roadmap-item">
-                        <span>🌷 3단계 (11월 말)</span>
-                        <span style="color: var(--accent-primary);">69.5 kg</span>
-                    </div>
-                    <div class="roadmap-item" style="background: #f0fdf4; border-color: #bbf7d0;">
-                        <span style="color: #166534;">👑 4단계 최종 목표 (12월 말) 🎉</span>
-                        <span style="color: #15803d; font-size: 0.95rem;">65.0 kg</span>
+
+                    <div class="milestone-timeline">
+                        <div class="milestone-card" id="mcard-1">
+                            <div class="milestone-info">
+                                <h4>🌱 1단계 마일스톤 (9월 말)</h4>
+                                <p>초기 감량 및 습관 형성기</p>
+                            </div>
+                            <div class="milestone-weight">79.5 kg</div>
+                        </div>
+
+                        <div class="milestone-card" id="mcard-2">
+                            <div class="milestone-info">
+                                <h4>🌿 2단계 마일스톤 (10월 말)</h4>
+                                <p>본격 지방 파쇄 속도기</p>
+                            </div>
+                            <div class="milestone-weight">74.5 kg</div>
+                        </div>
+
+                        <div class="milestone-card" id="mcard-3">
+                            <div class="milestone-info">
+                                <h4>🌷 3단계 마일스톤 (11월 말)</h4>
+                                <p>60kg대 진입 안정기</p>
+                            </div>
+                            <div class="milestone-weight">69.5 kg</div>
+                        </div>
+
+                        <div class="milestone-card" id="mcard-4">
+                            <div class="milestone-info">
+                                <h4>👑 4단계 최종 목표 (12월 말)</h4>
+                                <p>꿈의 65.0kg 최종 완주 🎉</p>
+                            </div>
+                            <div class="milestone-weight">65.0 kg</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -855,6 +888,21 @@
 
             document.getElementById(tabId).classList.add('active');
             btnEl.classList.add('active');
+
+            // 🚀 우주 레이드 탭 열 때 애니메이션 시작!
+            if (tabId === 'tab-quest' && records.length > 0) {
+                setTimeout(() => {
+                    updateSpaceRaidMap(records[records.length - 1].weight);
+                }, 100);
+            }
+
+            // 📈 그래프 차트 애니메이션 재생
+            if (tabId === 'tab-dashboard' && weightChart) {
+                weightChart.update();
+            }
+            if (tabId === 'tab-roadmap' && diffChart) {
+                diffChart.update();
+            }
         }
 
         function setSyncStatus(isLoading, text) {
@@ -927,55 +975,65 @@
             return { key: 'obese2', text: '2단계 비만', color: '#9f1239' };
         }
 
-        function highlightBMIBox(activeKey) {
-            ['under', 'normal', 'over', 'obese1', 'obese2'].forEach(k => {
-                const box = document.getElementById(`bmi-${k}`);
-                if (k === activeKey) box.classList.add('active');
-                else box.classList.remove('active');
-            });
-        }
-
-        // 🚶‍♂️ 가로 길 따라 걸어가는 레이드 보드게임 맵 연산 🗺️
-        function updateHorizontalRaidMap(currentWeight) {
+        // 🚀 우주선 수직 수송 레이드 맵 연산 🌌
+        function updateSpaceRaidMap(currentWeight) {
             const totalTargetLoss = INITIAL_WEIGHT - TARGET_WEIGHT; // 17.25kg
             const currentLoss = Math.max(0, INITIAL_WEIGHT - currentWeight);
             let progressRatio = currentLoss / totalTargetLoss;
             if (progressRatio > 1) progressRatio = 1;
 
-            // 라인 채우기 및 캐릭터 이동 (픽셀/퍼센트 위치 계산)
-            const lineFill = document.getElementById('raid-line-fill');
-            const playerAvatar = document.getElementById('player-avatar');
+            const rocketFill = document.getElementById('rocket-line-fill');
+            const rocketShip = document.getElementById('rocket-ship');
 
-            // 50px(출발)부터 시작해서 오른쪽 끝 노드까지의 비율 계산
-            const maxPercent = 88; // % 길의 길이
-            const currentPercent = progressRatio * maxPercent;
+            const fillHeightPercent = progressRatio * 82; // % 최고 높이
+            rocketFill.style.height = `${fillHeightPercent}%`;
+            rocketShip.style.bottom = `calc(40px + ${fillHeightPercent}%)`;
 
-            lineFill.style.width = `${currentPercent}%`;
-            playerAvatar.style.left = `calc(50px + ${currentPercent}%)`;
-
-            // 각 노드 상태 업데이트
-            const nodes = [
-                { id: 1, targetW: 77.0, statusEl: document.getElementById('node-status-1'), nodeEl: document.getElementById('node-1') },
-                { id: 2, targetW: 72.0, statusEl: document.getElementById('node-status-2'), nodeEl: document.getElementById('node-2') },
-                { id: 3, targetW: 67.0, statusEl: document.getElementById('node-status-3'), nodeEl: document.getElementById('node-3') },
-                { id: 4, targetW: 65.0, statusEl: document.getElementById('node-status-4'), nodeEl: document.getElementById('node-4') }
+            const snodes = [
+                { id: 1, targetW: 77.0, el: document.getElementById('snode-1'), subEl: document.getElementById('snode-sub-1') },
+                { id: 2, targetW: 72.0, el: document.getElementById('snode-2'), subEl: document.getElementById('snode-sub-2') },
+                { id: 3, targetW: 67.0, el: document.getElementById('snode-3'), subEl: document.getElementById('snode-sub-3') },
+                { id: 4, targetW: 65.0, el: document.getElementById('snode-4'), subEl: document.getElementById('snode-sub-4') }
             ];
 
-            let activeStageFound = false;
+            let activeFound = false;
 
-            nodes.forEach((n, idx) => {
-                n.nodeEl.classList.remove('cleared', 'current', 'locked');
+            snodes.forEach(s => {
+                s.el.classList.remove('cleared', 'current', 'locked');
 
-                if (currentWeight <= n.targetW) {
-                    n.nodeEl.classList.add('cleared');
-                    n.statusEl.innerText = '격파 완료 ⚔️';
-                } else if (!activeStageFound) {
-                    n.nodeEl.classList.add('current');
-                    n.statusEl.innerText = `전투 중 💥 (-${(currentWeight - n.targetW).toFixed(2)}kg)`;
-                    activeStageFound = true;
+                if (currentWeight <= s.targetW) {
+                    s.el.classList.add('cleared');
+                    s.subEl.innerText = `목표: ${s.targetW}kg (정복 완료 🎉)`;
+                } else if (!activeFound) {
+                    s.el.classList.add('current');
+                    s.subEl.innerText = `목표: ${s.targetW}kg (도달까지 -${(currentWeight - s.targetW).toFixed(2)}kg 🔥)`;
+                    activeFound = true;
                 } else {
-                    n.nodeEl.classList.add('locked');
-                    n.statusEl.innerText = '잠김 🔒';
+                    s.el.classList.add('locked');
+                    s.subEl.innerText = `목표: ${s.targetW}kg (잠김 🔒)`;
+                }
+            });
+        }
+
+        // 🎯 로드맵 마일스톤 카드 상태 업데이트
+        function updateRoadmapMilestones(currentWeight) {
+            const mcards = [
+                { id: 1, targetW: 79.5, el: document.getElementById('mcard-1') },
+                { id: 2, targetW: 74.5, el: document.getElementById('mcard-2') },
+                { id: 3, targetW: 69.5, el: document.getElementById('mcard-3') },
+                { id: 4, targetW: 65.0, el: document.getElementById('mcard-4') }
+            ];
+
+            let activeFound = false;
+
+            mcards.forEach(m => {
+                m.el.classList.remove('completed', 'active');
+
+                if (currentWeight <= m.targetW) {
+                    m.el.classList.add('completed');
+                } else if (!activeFound) {
+                    m.el.classList.add('active');
+                    activeFound = true;
                 }
             });
         }
@@ -1012,6 +1070,10 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: {
+                        duration: 1200,
+                        easing: 'easeOutQuart'
+                    },
                     scales: {
                         x: {
                             type: 'time',
@@ -1050,6 +1112,10 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: {
+                        duration: 1200,
+                        easing: 'easeOutQuart'
+                    },
                     scales: {
                         x: { grid: { display: false } },
                         y: { grid: { color: 'rgba(56, 189, 248, 0.1)' } }
@@ -1124,8 +1190,6 @@
                 document.getElementById('val-bmi-status').innerText = bmiStatus.text;
                 document.getElementById('val-bmi-status').style.color = bmiStatus.color;
 
-                highlightBMIBox(bmiStatus.key);
-
                 // 감량 진행률 계산
                 let progressPercent = ((currentLoss / totalTargetLoss) * 100).toFixed(1);
                 if (progressPercent < 0) progressPercent = 0;
@@ -1157,7 +1221,8 @@
                 }
 
                 calculatePaceAndEstimation(latest);
-                updateHorizontalRaidMap(latestWeight); // 🚶‍♂️ 가로 보드게임 맵 업데이트!
+                updateSpaceRaidMap(latestWeight); // 🚀 우주선 레이드 업데이트!
+                updateRoadmapMilestones(latestWeight); // 🎯 로드맵 마일스톤 업데이트!
             }
 
             updateCharts();
@@ -1261,31 +1326,9 @@
         async function deleteRecord(targetDate) {
             if (!confirm(`${targetDate} 기록을 진짜 삭제할 거야?`)) return;
 
-            setSyncStatus(true, "구글 시트에서 삭제 중...");
+            setSyncStatus(true, "구글 시트에 삭제 중...");
             try {
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'delete',
-                        date: targetDate
-                    })
-                });
-
-                setTimeout(() => {
-                    fetchRecordsFromSheet();
-                }, 1500);
-
-            } catch (err) {
-                alert("삭제 중 오류가 발생했어!");
-            }
-        }
-
-        window.onload = function() {
-            initCharts();
-            fetchRecordsFromSheet();
-        };
-    </script>
-</body>
-</html>
+                    headers: { 'Content-Type': '수정된 우주선 발사 레이드 디자인과 애니메이션 효과는 어때? 💙 더 변경하고 싶은 디테일이 있다면 언제든 편하게 말해줘!

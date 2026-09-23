@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💙 65kg 목표 달성 다이어트 스마트 트래커 💙</title>
+    <title>💙 다이어트 스마트 트래커 💙</title>
     <!-- Chart.js 및 플러그인, Confetti CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
@@ -17,6 +17,7 @@
     <style>
         :root {
             --bg: #e0f2fe;
+            --sidebar-bg: rgba(255, 255, 255, 0.82);
             --card-bg: rgba(255, 255, 255, 0.88);
             --card-border: #bae6fd;
             --text-main: #0c4a6e;
@@ -46,22 +47,91 @@
         body {
             background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #e0e7ff 100%);
             color: var(--text-main);
-            padding: 12px 16px;
+            padding: 12px;
             display: flex;
-            flex-direction: column;
+            gap: 12px;
         }
 
-        .dashboard-container {
-            max-width: 1400px;
-            margin: 0 auto;
+        /* 👈 왼쪽 사이드바 툴바 */
+        aside.sidebar {
+            width: 220px;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(12px);
+            border: 2px solid var(--card-border);
+            border-radius: 20px;
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.12);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #0369a1;
+            padding: 0 6px;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .tab-btn {
             width: 100%;
-            height: 100%;
+            padding: 12px 14px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.88rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--accent-primary);
+        }
+
+        .tab-btn.active {
+            background: #ffffff;
+            color: var(--accent-primary);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+        }
+
+        .sidebar-footer {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-align: center;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+        }
+
+        /* 👉 우측 메인 콘텐츠 영역 */
+        main.main-content {
+            flex: 1;
             display: flex;
             flex-direction: column;
             gap: 10px;
+            min-width: 0;
+            height: 100%;
         }
 
-        /* Combined Compact Header */
         header {
             display: flex;
             flex-direction: column;
@@ -82,12 +152,9 @@
         }
 
         .header-title h1 {
-            font-size: 1.2rem;
-            font-weight: 700;
+            font-size: 1.18rem;
+            font-weight: 800;
             color: #0369a1;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .header-title p {
@@ -158,45 +225,6 @@
             transition: width 0.6s ease;
         }
 
-        /* Cute Tab Navigation */
-        nav.tab-nav {
-            display: flex;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.6);
-            padding: 4px;
-            border-radius: 14px;
-            border: 2px solid var(--card-border);
-            flex-shrink: 0;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 8px;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            font-weight: 700;
-            font-size: 0.85rem;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .tab-btn:hover {
-            background: rgba(255, 255, 255, 0.8);
-            color: var(--accent-primary);
-        }
-
-        .tab-btn.active {
-            background: #ffffff;
-            color: var(--accent-primary);
-            box-shadow: 0 2px 10px rgba(56, 189, 248, 0.2);
-        }
-
         /* Tab Page Containers */
         .tab-page {
             display: none;
@@ -234,7 +262,7 @@
         }
 
         .metric-card .value {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: #0369a1;
             margin: 2px 0;
@@ -245,7 +273,6 @@
             color: var(--text-muted);
         }
 
-        /* Card Layout */
         .card {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
@@ -281,113 +308,145 @@
             min-height: 0;
         }
 
-        /* ⚔️ 보스 레이드 게임 퀘스트 스타일 ⚔️ */
-        .boss-stage-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            flex: 1;
-            min-height: 0;
-        }
-
-        .boss-card {
+        /* 🚶‍♂️ 횡스크롤 가로 보드게임 형태의 보스 레이드 🗺️ */
+        .raid-map-wrapper {
+            position: relative;
             background: #ffffff;
             border: 2px solid var(--card-border);
             border-radius: 16px;
-            padding: 14px;
+            padding: 24px 30px 20px 30px;
+            margin: auto 0;
+            box-shadow: inset 0 0 15px rgba(56, 189, 248, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .raid-path-container {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* 보스를 잇는 가로 길 (배경선) */
+        .raid-line-bg {
+            position: absolute;
+            top: 50%;
+            left: 50px;
+            right: 50px;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        /* 감량 게이지 채워지는 선 */
+        .raid-line-fill {
+            position: absolute;
+            top: 50%;
+            left: 50px;
+            width: 0%;
+            height: 12px;
+            background: linear-gradient(90deg, #38bdf8, #0284c7, #10b981);
+            border-radius: 6px;
+            transform: translateY(-50%);
+            z-index: 2;
+            transition: width 0.8s ease;
+        }
+
+        /* 가로 세로 걸어가는 플레이어 캐릭터 🚶‍♂️ */
+        .player-avatar {
+            position: absolute;
+            top: 15px;
+            left: 50px;
+            transform: translateX(-50%);
+            font-size: 2.2rem;
+            z-index: 10;
+            transition: left 0.8s ease;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+            animation: bounce 1s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateX(-50%) translateY(0); }
+            100% { transform: translateX(-50%) translateY(-6px); }
+        }
+
+        /* 거점 보스 노드 카드들 */
+        .boss-node {
+            position: relative;
+            z-index: 5;
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: center;
-            position: relative;
+            width: 130px;
+        }
+
+        .boss-icon-box {
+            width: 68px;
+            height: 68px;
+            background: #ffffff;
+            border: 3px solid #cbd5e1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            position: relative;
         }
 
-        .boss-card.locked {
-            background: #f8fafc;
-            opacity: 0.8;
-            filter: grayscale(0.5);
-        }
-
-        .boss-card.current {
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
-            transform: translateY(-2px);
-            background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
-        }
-
-        .boss-card.cleared {
-            background: #f0fdf4;
+        .boss-node.cleared .boss-icon-box {
             border-color: var(--success);
+            background: var(--success-bg);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
         }
 
-        .boss-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            padding: 3px 8px;
-            border-radius: 10px;
-            text-transform: uppercase;
+        .boss-node.current .boss-icon-box {
+            border-color: var(--accent-primary);
+            background: #e0f2fe;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+            transform: scale(1.15);
         }
 
-        .boss-badge.locked-badge { background: #e2e8f0; color: #64748b; }
-        .boss-badge.current-badge { background: #bae6fd; color: #0284c7; animation: pulse 1.5s infinite; }
-        .boss-badge.cleared-badge { background: var(--success-bg); color: var(--success); }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        .boss-node.locked .boss-icon-box {
+            opacity: 0.6;
+            filter: grayscale(0.8);
         }
 
-        .boss-avatar {
-            font-size: 2.8rem;
-            margin: 6px 0;
+        .node-info {
+            margin-top: 10px;
+            text-align: center;
         }
 
-        .boss-title {
-            font-size: 0.95rem;
+        .node-title {
+            font-size: 0.82rem;
             font-weight: 800;
             color: #0c4a6e;
         }
 
-        .boss-hp-label {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        .boss-hp-track {
-            width: 100%;
-            height: 12px;
-            background: #f1f5f9;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--card-border);
-            margin: 6px 0 4px 0;
-        }
-
-        .boss-hp-fill {
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(90deg, #f43f5e, #fb7185);
-            transition: width 0.5s ease;
-        }
-
-        .boss-card.cleared .boss-hp-fill {
-            background: var(--success);
-        }
-
-        .boss-desc {
+        .node-target {
             font-size: 0.72rem;
-            color: var(--text-muted);
-            margin-top: auto;
-            line-height: 1.3;
+            font-weight: 700;
+            color: var(--accent-primary);
         }
+
+        .node-status {
+            font-size: 0.68rem;
+            font-weight: 800;
+            margin-top: 2px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .boss-node.cleared .node-status { background: var(--success-bg); color: var(--success); }
+        .boss-node.current .node-status { background: #bae6fd; color: #0284c7; }
+        .boss-node.locked .node-status { background: #e2e8f0; color: #64748b; }
 
         /* Input Controls */
         .input-row {
@@ -496,12 +555,39 @@
 </head>
 <body>
 
-    <div class="dashboard-container">
-        <!-- Header & Integrated Progress Area -->
+    <!-- 👈 왼쪽 사이드바 툴바 -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <span>💙</span>
+            <span>스마트 트래커</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <button class="tab-btn active" onclick="switchTab('tab-dashboard', this)">
+                <span>📊</span> 메인 대시보드
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-quest', this)">
+                <span>⚔️</span> 5kg 보스 레이드
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-records', this)">
+                <span>📝</span> 체중 기록 & 관리
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-roadmap', this)">
+                <span>🎯</span> 로드맵 & 분석
+            </button>
+        </nav>
+
+        <div class="sidebar-footer">
+            💙 65kg 달성 프로젝트
+        </div>
+    </aside>
+
+    <!-- 👉 메인 콘텐츠 영역 -->
+    <main class="main-content">
         <header>
             <div class="header-top">
                 <div class="header-title">
-                    <h1>💙 다이어트 스마트 트래커 💙</h1>
+                    <h1>다이어트 스마트 트래커</h1>
                     <p>신장 173.5cm | 시작 82.25kg ➡️ 최종 목표 65.0kg 💙</p>
                 </div>
                 <div class="sync-status">
@@ -510,7 +596,6 @@
                 </div>
             </div>
 
-            <!-- 통합 감량 진행률 & D-Day 진행 바 -->
             <div class="header-progress-row">
                 <div class="progress-box-item">
                     <div class="progress-label-row">
@@ -539,22 +624,6 @@
                 </div>
             </div>
         </header>
-
-        <!-- 파스텔 하늘색 탭 메뉴 (4번째 게임 퀘스트 탭 추가!) -->
-        <nav class="tab-nav">
-            <button class="tab-btn active" onclick="switchTab('tab-dashboard', this)">
-                <span>📊</span> 메인 대시보드
-            </button>
-            <button class="tab-btn" onclick="switchTab('tab-quest', this)">
-                <span>⚔️</span> 5kg 보스 레이드
-            </button>
-            <button class="tab-btn" onclick="switchTab('tab-records', this)">
-                <span>📝</span> 체중 기록 & 관리
-            </button>
-            <button class="tab-btn" onclick="switchTab('tab-roadmap', this)">
-                <span>🎯</span> 로드맵 & 체형 분석
-            </button>
-        </nav>
 
         <!-- PAGE 1: 메인 대시보드 -->
         <div id="tab-dashboard" class="tab-page active">
@@ -597,65 +666,70 @@
             </div>
         </div>
 
-        <!-- PAGE 2: 5kg 단위 보스 레이드 게임 퀘스트 (신규 탭!) -->
+        <!-- PAGE 2: 🚶‍♂️ 가로 길 걸어가며 5kg 보스 격파하는 보드게임 맵 🎮 -->
         <div id="tab-quest" class="tab-page">
-            <div class="card" style="flex: 1; min-height: 0;">
+            <div class="card" style="flex: 1; min-height: 0; justify-content: center;">
                 <div class="card-header">
-                    <div class="card-title">⚔️ 5kg 단위 체중 파쇄 보스 레이드 🎮</div>
-                    <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">체중을 깎을수록 보스 HP가 깎여요! 💥</span>
+                    <div class="card-title">⚔️ 5kg 단위 체중 파쇄 가로 보드게임 맵 🎮</div>
+                    <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;" id="txt-raid-status-sub">살이 빠질수록 캐릭터가 가로 길을 따라 전진해요! 🚶‍♂️</span>
                 </div>
 
-                <div class="boss-stage-grid">
-                    <!-- 보스 1: 82.25kg -> 77.0kg -->
-                    <div class="boss-card" id="boss-card-1">
-                        <span class="boss-badge" id="boss-badge-1">STAGE 1</span>
-                        <div class="boss-avatar">🧟‍♂️</div>
-                        <div class="boss-title">STAGE 1: 80kg 중력 보스</div>
-                        <div class="boss-hp-label">목표: 77.0kg 달성 (5.25kg 격파)</div>
-                        <div class="boss-hp-track">
-                            <div class="boss-hp-fill" id="boss-hp-1"></div>
-                        </div>
-                        <div class="boss-hp-label" id="boss-hp-txt-1">HP 100%</div>
-                        <div class="boss-desc">시작 체중(82.25kg)의 무거운 중력을 물리쳐라! 💥</div>
-                    </div>
+                <div class="raid-map-wrapper">
+                    <div class="player-avatar" id="player-avatar">🚶‍♂️</div>
 
-                    <!-- 보스 2: 77.0kg -> 72.0kg -->
-                    <div class="boss-card" id="boss-card-2">
-                        <span class="boss-badge" id="boss-badge-2">STAGE 2</span>
-                        <div class="boss-avatar">🧛‍♂️</div>
-                        <div class="boss-title">STAGE 2: 정체기 자극 보스</div>
-                        <div class="boss-hp-label">목표: 72.0kg 달성 (5.0kg 격파)</div>
-                        <div class="boss-hp-track">
-                            <div class="boss-hp-fill" id="boss-hp-2"></div>
-                        </div>
-                        <div class="boss-hp-label" id="boss-hp-txt-2">HP 100%</div>
-                        <div class="boss-desc">중간 정체기를 극복하고 70kg대 초반 진입! ⚔️</div>
-                    </div>
+                    <div class="raid-path-container">
+                        <div class="raid-line-bg"></div>
+                        <div class="raid-line-fill" id="raid-line-fill"></div>
 
-                    <!-- 보스 3: 72.0kg -> 67.0kg -->
-                    <div class="boss-card" id="boss-card-3">
-                        <span class="boss-badge" id="boss-badge-3">STAGE 3</span>
-                        <div class="boss-avatar">🐉</div>
-                        <div class="boss-title">STAGE 3: 70kg 수문장 드래곤</div>
-                        <div class="boss-hp-label">목표: 67.0kg 달성 (5.0kg 격파)</div>
-                        <div class="boss-hp-track">
-                            <div class="boss-hp-fill" id="boss-hp-3"></div>
+                        <!-- 82.25kg 출발점 -->
+                        <div class="boss-node cleared" id="node-start">
+                            <div class="boss-icon-box">🚩</div>
+                            <div class="node-info">
+                                <div class="node-title">START</div>
+                                <div class="node-target">82.25 kg</div>
+                                <div class="node-status">출발 완료</div>
+                            </div>
                         </div>
-                        <div class="boss-hp-label" id="boss-hp-txt-3">HP 100%</div>
-                        <div class="boss-desc">드디어 60kg대 벽을 부수고 고지가 눈앞! 🔥</div>
-                    </div>
 
-                    <!-- 보스 4: 67.0kg -> 65.0kg -->
-                    <div class="boss-card" id="boss-card-4">
-                        <span class="boss-badge" id="boss-badge-4">FINAL BOSS</span>
-                        <div class="boss-avatar">👑</div>
-                        <div class="boss-title">FINAL: 65kg 마왕</div>
-                        <div class="boss-hp-label">목표: 65.0kg 최종 격파 (2.0kg)</div>
-                        <div class="boss-hp-track">
-                            <div class="boss-hp-fill" id="boss-hp-4"></div>
+                        <!-- Stage 1 보스 (77.0kg) -->
+                        <div class="boss-node" id="node-1">
+                            <div class="boss-icon-box">🧟‍♂️</div>
+                            <div class="node-info">
+                                <div class="node-title">80kg 중력 보스</div>
+                                <div class="node-target">77.0 kg</div>
+                                <div class="node-status" id="node-status-1">대기 중</div>
+                            </div>
                         </div>
-                        <div class="boss-hp-label" id="boss-hp-txt-4">HP 100%</div>
-                        <div class="boss-desc">마침내 꿈의 65.0kg 완전 정복 및 미션 클리어! 🎉</div>
+
+                        <!-- Stage 2 보스 (72.0kg) -->
+                        <div class="boss-node" id="node-2">
+                            <div class="boss-icon-box">🧛‍♂️</div>
+                            <div class="node-info">
+                                <div class="node-title">정체기 자극 보스</div>
+                                <div class="node-target">72.0 kg</div>
+                                <div class="node-status" id="node-status-2">대기 중</div>
+                            </div>
+                        </div>
+
+                        <!-- Stage 3 보스 (67.0kg) -->
+                        <div class="boss-node" id="node-3">
+                            <div class="boss-icon-box">🐉</div>
+                            <div class="node-info">
+                                <div class="node-title">70kg 수문장 드래곤</div>
+                                <div class="node-target">67.0 kg</div>
+                                <div class="node-status" id="node-status-3">대기 중</div>
+                            </div>
+                        </div>
+
+                        <!-- Final 보스 (65.0kg) -->
+                        <div class="boss-node" id="node-4">
+                            <div class="boss-icon-box">👑</div>
+                            <div class="node-info">
+                                <div class="node-title">65kg 마왕</div>
+                                <div class="node-target">65.0 kg</div>
+                                <div class="node-status" id="node-status-4">대기 중</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -751,7 +825,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxW8JZAneCsMulsdR0qZ1-BdOqe8fs75hlSmpPH_Py1BzkNg8OSmJyRspuOloOFzAKL/exec";
@@ -767,14 +841,6 @@
             { date: '2026-10-31', weight: 74.5 },
             { date: '2026-11-30', weight: 69.5 },
             { date: '2026-12-31', weight: 65.0 }
-        ];
-
-        // 5kg 단위 보스 스테이지 설정
-        const bossStages = [
-            { id: 1, name: 'STAGE 1: 80kg 중력 보스', startW: 82.25, targetW: 77.0, icon: '🧟‍♂️' },
-            { id: 2, name: 'STAGE 2: 정체기 자극 보스', startW: 77.0, targetW: 72.0, icon: '🧛‍♂️' },
-            { id: 3, name: 'STAGE 3: 70kg 수문장 드래곤', startW: 72.0, targetW: 67.0, icon: '🐉' },
-            { id: 4, name: 'FINAL: 65kg 마왕', startW: 67.0, targetW: 65.0, icon: '👑' }
         ];
 
         let records = [];
@@ -869,43 +935,47 @@
             });
         }
 
-        // ⚔️ 5kg 보스 레이드 연산 및 업데이트 ⚔️
-        function updateBossRaid(currentWeight) {
-            bossStages.forEach(stage => {
-                const card = document.getElementById(`boss-card-${stage.id}`);
-                const badge = document.getElementById(`boss-badge-${stage.id}`);
-                const hpFill = document.getElementById(`boss-hp-${stage.id}`);
-                const hpTxt = document.getElementById(`boss-hp-txt-${stage.id}`);
+        // 🚶‍♂️ 가로 길 따라 걸어가는 레이드 보드게임 맵 연산 🗺️
+        function updateHorizontalRaidMap(currentWeight) {
+            const totalTargetLoss = INITIAL_WEIGHT - TARGET_WEIGHT; // 17.25kg
+            const currentLoss = Math.max(0, INITIAL_WEIGHT - currentWeight);
+            let progressRatio = currentLoss / totalTargetLoss;
+            if (progressRatio > 1) progressRatio = 1;
 
-                card.classList.remove('cleared', 'current', 'locked');
-                badge.classList.remove('cleared-badge', 'current-badge', 'locked-badge');
+            // 라인 채우기 및 캐릭터 이동 (픽셀/퍼센트 위치 계산)
+            const lineFill = document.getElementById('raid-line-fill');
+            const playerAvatar = document.getElementById('player-avatar');
 
-                if (currentWeight <= stage.targetW) {
-                    // 보스 격파 완료!
-                    card.classList.add('cleared');
-                    badge.classList.add('cleared-badge');
-                    badge.innerText = 'CLEARED ⚔️';
-                    hpFill.style.width = '0%';
-                    hpTxt.innerText = 'HP 0% (격파 완료! 🎉)';
-                } else if (currentWeight < stage.startW) {
-                    // 현재 전투 진행 중인 보스!
-                    card.classList.add('current');
-                    badge.classList.add('current-badge');
-                    badge.innerText = 'IN BATTLE 💥';
+            // 50px(출발)부터 시작해서 오른쪽 끝 노드까지의 비율 계산
+            const maxPercent = 88; // % 길의 길이
+            const currentPercent = progressRatio * maxPercent;
 
-                    const totalHpNeeded = stage.startW - stage.targetW;
-                    const damageDone = stage.startW - currentWeight;
-                    const remainingHpPercent = Math.max(0, Math.min(100, ((1 - (damageDone / totalHpNeeded)) * 100))).toFixed(1);
+            lineFill.style.width = `${currentPercent}%`;
+            playerAvatar.style.left = `calc(50px + ${currentPercent}%)`;
 
-                    hpFill.style.width = `${remainingHpPercent}%`;
-                    hpTxt.innerText = `HP ${remainingHpPercent}% (남은 데미지: ${(currentWeight - stage.targetW).toFixed(2)}kg)`;
+            // 각 노드 상태 업데이트
+            const nodes = [
+                { id: 1, targetW: 77.0, statusEl: document.getElementById('node-status-1'), nodeEl: document.getElementById('node-1') },
+                { id: 2, targetW: 72.0, statusEl: document.getElementById('node-status-2'), nodeEl: document.getElementById('node-2') },
+                { id: 3, targetW: 67.0, statusEl: document.getElementById('node-status-3'), nodeEl: document.getElementById('node-3') },
+                { id: 4, targetW: 65.0, statusEl: document.getElementById('node-status-4'), nodeEl: document.getElementById('node-4') }
+            ];
+
+            let activeStageFound = false;
+
+            nodes.forEach((n, idx) => {
+                n.nodeEl.classList.remove('cleared', 'current', 'locked');
+
+                if (currentWeight <= n.targetW) {
+                    n.nodeEl.classList.add('cleared');
+                    n.statusEl.innerText = '격파 완료 ⚔️';
+                } else if (!activeStageFound) {
+                    n.nodeEl.classList.add('current');
+                    n.statusEl.innerText = `전투 중 💥 (-${(currentWeight - n.targetW).toFixed(2)}kg)`;
+                    activeStageFound = true;
                 } else {
-                    // 아직 도달하지 못한 보스
-                    card.classList.add('locked');
-                    badge.classList.add('locked-badge');
-                    badge.innerText = 'LOCKED 🔒';
-                    hpFill.style.width = '100%';
-                    hpTxt.innerText = 'HP 100%';
+                    n.nodeEl.classList.add('locked');
+                    n.statusEl.innerText = '잠김 🔒';
                 }
             });
         }
@@ -1087,7 +1157,7 @@
                 }
 
                 calculatePaceAndEstimation(latest);
-                updateBossRaid(latestWeight); // ⚔️ 보스 레이드 업데이트!
+                updateHorizontalRaidMap(latestWeight); // 🚶‍♂️ 가로 보드게임 맵 업데이트!
             }
 
             updateCharts();
@@ -1171,7 +1241,7 @@
                     })
                 });
 
-                // 귀여운 폭죽 효과 팡! 팡!
+                // 폭죽 효과!
                 confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
 
                 setTimeout(() => {

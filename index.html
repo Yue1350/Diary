@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💙 65kg 목표 달성 다이어트 스마트 트래커 💙</title>
-    <!-- Chart.js 및 날짜/zoom 플러그인 CDN -->
+    <!-- Chart.js 및 플러그인, Confetti CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <!-- Google Fonts Noto Sans KR -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #e0f2fe;
@@ -39,7 +40,7 @@
 
         html, body {
             height: 100vh;
-            overflow: hidden; /* 한 화면 고정 (스크롤 최소화) */
+            overflow: hidden;
         }
 
         body {
@@ -60,7 +61,7 @@
             gap: 10px;
         }
 
-        /* Combined Compact Header & Progress Section */
+        /* Combined Compact Header */
         header {
             display: flex;
             flex-direction: column;
@@ -68,7 +69,7 @@
             background: var(--card-bg);
             backdrop-filter: blur(12px);
             border: 2px solid var(--card-border);
-            padding: 12px 20px;
+            padding: 10px 18px;
             border-radius: 16px;
             box-shadow: 0 4px 15px rgba(56, 189, 248, 0.12);
             flex-shrink: 0;
@@ -81,7 +82,7 @@
         }
 
         .header-title h1 {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: #0369a1;
             display: flex;
@@ -90,12 +91,12 @@
         }
 
         .header-title p {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: var(--text-muted);
         }
 
         .sync-status {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: var(--text-muted);
             display: flex;
             align-items: center;
@@ -118,7 +119,6 @@
             box-shadow: 0 0 8px var(--success);
         }
 
-        /* Header 내 통합 감량 진행률 & D-Day 진행 바 */
         .header-progress-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -136,7 +136,7 @@
         .progress-label-row {
             display: flex;
             justify-content: space-between;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: #0369a1;
         }
@@ -201,7 +201,7 @@
         .tab-page {
             display: none;
             flex: 1;
-            min-height: 0; /* Overflow 지렛대 */
+            min-height: 0;
         }
 
         .tab-page.active {
@@ -222,36 +222,36 @@
             background: var(--card-bg);
             backdrop-filter: blur(10px);
             border: 2px solid var(--card-border);
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-radius: 14px;
             box-shadow: 0 4px 12px rgba(56, 189, 248, 0.06);
         }
 
         .metric-card .label {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
             color: var(--text-muted);
         }
 
         .metric-card .value {
-            font-size: 1.35rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: #0369a1;
             margin: 2px 0;
         }
 
         .metric-card .sub {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
         }
 
-        /* Cute Card Layout */
+        /* Card Layout */
         .card {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
             border: 2px solid var(--card-border);
             border-radius: 16px;
-            padding: 14px 18px;
+            padding: 12px 16px;
             box-shadow: 0 4px 15px rgba(56, 189, 248, 0.06);
             display: flex;
             flex-direction: column;
@@ -266,28 +266,12 @@
         }
 
         .card-title {
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             font-weight: 700;
             color: #0369a1;
             display: flex;
             align-items: center;
             gap: 6px;
-        }
-
-        .btn-reset-zoom {
-            background: #ffffff;
-            border: 1px solid var(--card-border);
-            color: var(--accent-primary);
-            padding: 4px 10px;
-            border-radius: 10px;
-            font-size: 0.72rem;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .btn-reset-zoom:hover {
-            background: var(--accent-primary);
-            color: #ffffff;
         }
 
         .chart-box {
@@ -297,12 +281,120 @@
             min-height: 0;
         }
 
+        /* ⚔️ 보스 레이드 게임 퀘스트 스타일 ⚔️ */
+        .boss-stage-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .boss-card {
+            background: #ffffff;
+            border: 2px solid var(--card-border);
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .boss-card.locked {
+            background: #f8fafc;
+            opacity: 0.8;
+            filter: grayscale(0.5);
+        }
+
+        .boss-card.current {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            transform: translateY(-2px);
+            background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+        }
+
+        .boss-card.cleared {
+            background: #f0fdf4;
+            border-color: var(--success);
+        }
+
+        .boss-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+        }
+
+        .boss-badge.locked-badge { background: #e2e8f0; color: #64748b; }
+        .boss-badge.current-badge { background: #bae6fd; color: #0284c7; animation: pulse 1.5s infinite; }
+        .boss-badge.cleared-badge { background: var(--success-bg); color: var(--success); }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .boss-avatar {
+            font-size: 2.8rem;
+            margin: 6px 0;
+        }
+
+        .boss-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0c4a6e;
+        }
+
+        .boss-hp-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .boss-hp-track {
+            width: 100%;
+            height: 12px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            margin: 6px 0 4px 0;
+        }
+
+        .boss-hp-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #f43f5e, #fb7185);
+            transition: width 0.5s ease;
+        }
+
+        .boss-card.cleared .boss-hp-fill {
+            background: var(--success);
+        }
+
+        .boss-desc {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: auto;
+            line-height: 1.3;
+        }
+
         /* Input Controls */
         .input-row {
             display: grid;
             grid-template-columns: 1fr 1fr auto;
             gap: 10px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             flex-shrink: 0;
         }
 
@@ -310,7 +402,7 @@
             background: #ffffff;
             border: 2px solid var(--card-border);
             color: var(--text-main);
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-radius: 12px;
             font-size: 0.85rem;
             outline: none;
@@ -322,12 +414,11 @@
             background: linear-gradient(135deg, #38bdf8, #0284c7);
             color: #ffffff;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 12px;
             font-weight: 700;
             font-size: 0.85rem;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.2);
         }
 
         /* Table */
@@ -348,20 +439,20 @@
             background: #bae6fd;
             color: #0369a1;
             font-weight: 700;
-            padding: 8px 12px;
+            padding: 6px 10px;
         }
 
         td {
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-bottom: 1px solid var(--card-border);
         }
 
         .btn-edit, .btn-del {
             border: none;
-            padding: 3px 8px;
+            padding: 2px 6px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 700;
         }
 
@@ -372,15 +463,15 @@
         .bmi-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin-top: 8px;
+            gap: 6px;
+            margin-top: 6px;
         }
 
         .bmi-item {
             background: #ffffff;
             border: 2px solid var(--card-border);
-            border-radius: 12px;
-            padding: 8px 4px;
+            border-radius: 10px;
+            padding: 6px 4px;
             text-align: center;
         }
 
@@ -390,15 +481,15 @@
             transform: scale(1.02);
         }
 
-        .roadmap-list { display: flex; flex-direction: column; gap: 8px; }
+        .roadmap-list { display: flex; flex-direction: column; gap: 6px; }
         .roadmap-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 8px 12px;
             background: #ffffff;
             border: 2px solid var(--card-border);
-            border-radius: 12px;
-            font-size: 0.85rem;
+            border-radius: 10px;
+            font-size: 0.82rem;
             font-weight: 600;
         }
     </style>
@@ -419,7 +510,7 @@
                 </div>
             </div>
 
-            <!-- 헤더 상단 영역에 통합된 감량 진행률 & D-Day 진행 바 -->
+            <!-- 통합 감량 진행률 & D-Day 진행 바 -->
             <div class="header-progress-row">
                 <div class="progress-box-item">
                     <div class="progress-label-row">
@@ -449,10 +540,13 @@
             </div>
         </header>
 
-        <!-- 파스텔 하늘색 탭 메뉴 -->
+        <!-- 파스텔 하늘색 탭 메뉴 (4번째 게임 퀘스트 탭 추가!) -->
         <nav class="tab-nav">
             <button class="tab-btn active" onclick="switchTab('tab-dashboard', this)">
                 <span>📊</span> 메인 대시보드
+            </button>
+            <button class="tab-btn" onclick="switchTab('tab-quest', this)">
+                <span>⚔️</span> 5kg 보스 레이드
             </button>
             <button class="tab-btn" onclick="switchTab('tab-records', this)">
                 <span>📝</span> 체중 기록 & 관리
@@ -467,7 +561,7 @@
             <div class="metrics-banner">
                 <div class="metric-card">
                     <div class="label">현재 체중 💙</div>
-                    <div class="value" id="val-current">--.-- <span style="font-size: 0.9rem;">kg</span></div>
+                    <div class="value" id="val-current">--.-- <span style="font-size: 0.85rem;">kg</span></div>
                     <div class="sub" id="val-remaining">남은 감량 --kg</div>
                 </div>
                 <div class="metric-card">
@@ -482,12 +576,12 @@
                 </div>
                 <div class="metric-card">
                     <div class="label">주간 감량 속도 ⚡</div>
-                    <div class="value" id="val-pace">- <span style="font-size: 0.85rem;">kg/주</span></div>
+                    <div class="value" id="val-pace">- <span style="font-size: 0.8rem;">kg/주</span></div>
                     <div class="sub">최근 7일 기준</div>
                 </div>
                 <div class="metric-card">
                     <div class="label">예상 달성일 🎉</div>
-                    <div class="value" id="val-est-date" style="font-size: 1.15rem;">계산 중...</div>
+                    <div class="value" id="val-est-date" style="font-size: 1.1rem;">계산 중...</div>
                     <div class="sub" id="val-est-sub">현재 페이스 기준</div>
                 </div>
             </div>
@@ -495,7 +589,7 @@
             <div class="card" style="flex: 1; min-height: 0;">
                 <div class="card-header">
                     <div class="card-title">📈 체중 감량 추이 그래프 💙</div>
-                    <button class="btn-reset-zoom" onclick="resetZoom()">🔍 Zoom 초기화</button>
+                    <button class="btn-submit" style="padding: 4px 10px; font-size: 0.72rem;" onclick="resetZoom()">🔍 Zoom 초기화</button>
                 </div>
                 <div class="chart-box">
                     <canvas id="weightChart"></canvas>
@@ -503,7 +597,71 @@
             </div>
         </div>
 
-        <!-- PAGE 2: 체중 기록 & 관리 -->
+        <!-- PAGE 2: 5kg 단위 보스 레이드 게임 퀘스트 (신규 탭!) -->
+        <div id="tab-quest" class="tab-page">
+            <div class="card" style="flex: 1; min-height: 0;">
+                <div class="card-header">
+                    <div class="card-title">⚔️ 5kg 단위 체중 파쇄 보스 레이드 🎮</div>
+                    <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">체중을 깎을수록 보스 HP가 깎여요! 💥</span>
+                </div>
+
+                <div class="boss-stage-grid">
+                    <!-- 보스 1: 82.25kg -> 77.0kg -->
+                    <div class="boss-card" id="boss-card-1">
+                        <span class="boss-badge" id="boss-badge-1">STAGE 1</span>
+                        <div class="boss-avatar">🧟‍♂️</div>
+                        <div class="boss-title">STAGE 1: 80kg 중력 보스</div>
+                        <div class="boss-hp-label">목표: 77.0kg 달성 (5.25kg 격파)</div>
+                        <div class="boss-hp-track">
+                            <div class="boss-hp-fill" id="boss-hp-1"></div>
+                        </div>
+                        <div class="boss-hp-label" id="boss-hp-txt-1">HP 100%</div>
+                        <div class="boss-desc">시작 체중(82.25kg)의 무거운 중력을 물리쳐라! 💥</div>
+                    </div>
+
+                    <!-- 보스 2: 77.0kg -> 72.0kg -->
+                    <div class="boss-card" id="boss-card-2">
+                        <span class="boss-badge" id="boss-badge-2">STAGE 2</span>
+                        <div class="boss-avatar">🧛‍♂️</div>
+                        <div class="boss-title">STAGE 2: 정체기 자극 보스</div>
+                        <div class="boss-hp-label">목표: 72.0kg 달성 (5.0kg 격파)</div>
+                        <div class="boss-hp-track">
+                            <div class="boss-hp-fill" id="boss-hp-2"></div>
+                        </div>
+                        <div class="boss-hp-label" id="boss-hp-txt-2">HP 100%</div>
+                        <div class="boss-desc">중간 정체기를 극복하고 70kg대 초반 진입! ⚔️</div>
+                    </div>
+
+                    <!-- 보스 3: 72.0kg -> 67.0kg -->
+                    <div class="boss-card" id="boss-card-3">
+                        <span class="boss-badge" id="boss-badge-3">STAGE 3</span>
+                        <div class="boss-avatar">🐉</div>
+                        <div class="boss-title">STAGE 3: 70kg 수문장 드래곤</div>
+                        <div class="boss-hp-label">목표: 67.0kg 달성 (5.0kg 격파)</div>
+                        <div class="boss-hp-track">
+                            <div class="boss-hp-fill" id="boss-hp-3"></div>
+                        </div>
+                        <div class="boss-hp-label" id="boss-hp-txt-3">HP 100%</div>
+                        <div class="boss-desc">드디어 60kg대 벽을 부수고 고지가 눈앞! 🔥</div>
+                    </div>
+
+                    <!-- 보스 4: 67.0kg -> 65.0kg -->
+                    <div class="boss-card" id="boss-card-4">
+                        <span class="boss-badge" id="boss-badge-4">FINAL BOSS</span>
+                        <div class="boss-avatar">👑</div>
+                        <div class="boss-title">FINAL: 65kg 마왕</div>
+                        <div class="boss-hp-label">목표: 65.0kg 최종 격파 (2.0kg)</div>
+                        <div class="boss-hp-track">
+                            <div class="boss-hp-fill" id="boss-hp-4"></div>
+                        </div>
+                        <div class="boss-hp-label" id="boss-hp-txt-4">HP 100%</div>
+                        <div class="boss-desc">마침내 꿈의 65.0kg 완전 정복 및 미션 클리어! 🎉</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 3: 체중 기록 & 관리 -->
         <div id="tab-records" class="tab-page">
             <div class="card" style="flex: 1; min-height: 0;">
                 <div class="card-header">
@@ -530,14 +688,14 @@
             </div>
         </div>
 
-        <!-- PAGE 3: 로드맵 & 체형 분석 -->
+        <!-- PAGE 4: 로드맵 & 체형 분석 -->
         <div id="tab-roadmap" class="tab-page">
             <div class="card" style="flex: 1; min-height: 0;">
                 <div class="card-header">
                     <div class="card-title">⚖️ 로드맵 목표 대비 성과 분석 💙</div>
                 </div>
-                <div style="margin-bottom: 10px; background: #f0f9ff; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--card-border);">
-                    <div id="dev-detail-text" style="font-size: 1rem; font-weight: 700; color: #0369a1;">
+                <div style="margin-bottom: 8px; background: #f0f9ff; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--card-border);">
+                    <div id="dev-detail-text" style="font-size: 0.95rem; font-weight: 700; color: #0369a1;">
                         데이터 불러오는 중...
                     </div>
                 </div>
@@ -550,25 +708,25 @@
                 <div class="card-header">
                     <div class="card-title">📊 BMI 체형 진단 & 🗺️ 단계별 로드맵</div>
                 </div>
-                <div class="bmi-grid" style="margin-bottom: 12px;">
+                <div class="bmi-grid" style="margin-bottom: 8px;">
                     <div class="bmi-item" id="bmi-under">
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">&lt;18.5</div>
+                        <div style="font-size: 0.68rem; color: var(--text-muted);">&lt;18.5</div>
                         <div style="font-weight: 700; color: #0284c7;">저체중</div>
                     </div>
                     <div class="bmi-item" id="bmi-normal">
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">18.5-22.9</div>
+                        <div style="font-size: 0.68rem; color: var(--text-muted);">18.5-22.9</div>
                         <div style="font-weight: 700; color: #059669;">정상</div>
                     </div>
                     <div class="bmi-item" id="bmi-over">
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">23.0-24.9</div>
+                        <div style="font-size: 0.68rem; color: var(--text-muted);">23.0-24.9</div>
                         <div style="font-weight: 700; color: #d97706;">과체중</div>
                     </div>
                     <div class="bmi-item" id="bmi-obese1">
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">25.0-29.9</div>
+                        <div style="font-size: 0.68rem; color: var(--text-muted);">25.0-29.9</div>
                         <div style="font-weight: 700; color: #e11d48;">1단계비만</div>
                     </div>
                     <div class="bmi-item" id="bmi-obese2">
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">&ge;30.0</div>
+                        <div style="font-size: 0.68rem; color: var(--text-muted);">&ge;30.0</div>
                         <div style="font-weight: 700; color: #9f1239;">2단계비만</div>
                     </div>
                 </div>
@@ -609,6 +767,14 @@
             { date: '2026-10-31', weight: 74.5 },
             { date: '2026-11-30', weight: 69.5 },
             { date: '2026-12-31', weight: 65.0 }
+        ];
+
+        // 5kg 단위 보스 스테이지 설정
+        const bossStages = [
+            { id: 1, name: 'STAGE 1: 80kg 중력 보스', startW: 82.25, targetW: 77.0, icon: '🧟‍♂️' },
+            { id: 2, name: 'STAGE 2: 정체기 자극 보스', startW: 77.0, targetW: 72.0, icon: '🧛‍♂️' },
+            { id: 3, name: 'STAGE 3: 70kg 수문장 드래곤', startW: 72.0, targetW: 67.0, icon: '🐉' },
+            { id: 4, name: 'FINAL: 65kg 마왕', startW: 67.0, targetW: 65.0, icon: '👑' }
         ];
 
         let records = [];
@@ -700,6 +866,47 @@
                 const box = document.getElementById(`bmi-${k}`);
                 if (k === activeKey) box.classList.add('active');
                 else box.classList.remove('active');
+            });
+        }
+
+        // ⚔️ 5kg 보스 레이드 연산 및 업데이트 ⚔️
+        function updateBossRaid(currentWeight) {
+            bossStages.forEach(stage => {
+                const card = document.getElementById(`boss-card-${stage.id}`);
+                const badge = document.getElementById(`boss-badge-${stage.id}`);
+                const hpFill = document.getElementById(`boss-hp-${stage.id}`);
+                const hpTxt = document.getElementById(`boss-hp-txt-${stage.id}`);
+
+                card.classList.remove('cleared', 'current', 'locked');
+                badge.classList.remove('cleared-badge', 'current-badge', 'locked-badge');
+
+                if (currentWeight <= stage.targetW) {
+                    // 보스 격파 완료!
+                    card.classList.add('cleared');
+                    badge.classList.add('cleared-badge');
+                    badge.innerText = 'CLEARED ⚔️';
+                    hpFill.style.width = '0%';
+                    hpTxt.innerText = 'HP 0% (격파 완료! 🎉)';
+                } else if (currentWeight < stage.startW) {
+                    // 현재 전투 진행 중인 보스!
+                    card.classList.add('current');
+                    badge.classList.add('current-badge');
+                    badge.innerText = 'IN BATTLE 💥';
+
+                    const totalHpNeeded = stage.startW - stage.targetW;
+                    const damageDone = stage.startW - currentWeight;
+                    const remainingHpPercent = Math.max(0, Math.min(100, ((1 - (damageDone / totalHpNeeded)) * 100))).toFixed(1);
+
+                    hpFill.style.width = `${remainingHpPercent}%`;
+                    hpTxt.innerText = `HP ${remainingHpPercent}% (남은 데미지: ${(currentWeight - stage.targetW).toFixed(2)}kg)`;
+                } else {
+                    // 아직 도달하지 못한 보스
+                    card.classList.add('locked');
+                    badge.classList.add('locked-badge');
+                    badge.innerText = 'LOCKED 🔒';
+                    hpFill.style.width = '100%';
+                    hpTxt.innerText = 'HP 100%';
+                }
             });
         }
 
@@ -838,7 +1045,7 @@
                 const dDay = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 document.getElementById('val-dday').innerText = `D-${dDay > 0 ? dDay : 0}`;
 
-                document.getElementById('val-current').innerHTML = `${latestWeight.toFixed(2)} <span style="font-size: 0.9rem;">kg</span>`;
+                document.getElementById('val-current').innerHTML = `${latestWeight.toFixed(2)} <span style="font-size: 0.85rem;">kg</span>`;
                 document.getElementById('val-remaining').innerText = `남은 감량 ${remainingLoss > 0 ? remainingLoss : 0}kg`;
 
                 const bmi = calculateBMI(latestWeight);
@@ -857,7 +1064,7 @@
                 document.getElementById('txt-progress-percent').innerText = `${progressPercent}%`;
                 document.getElementById('txt-total-loss').innerText = `총 -${currentLoss.toFixed(2)}kg 감량 완료 💙`;
 
-                // 💙 D-Day 기간 진행률 계산 및 업데이트 💙
+                // D-Day 기간 진행률
                 const totalDays = (TARGET_DATE - START_DATE) / (1000 * 60 * 60 * 24);
                 const passedDays = (today - START_DATE) / (1000 * 60 * 60 * 24);
                 let dDayPercent = ((passedDays / totalDays) * 100).toFixed(1);
@@ -880,6 +1087,7 @@
                 }
 
                 calculatePaceAndEstimation(latest);
+                updateBossRaid(latestWeight); // ⚔️ 보스 레이드 업데이트!
             }
 
             updateCharts();
@@ -889,7 +1097,7 @@
             const targetRec = records.find(r => r.date === targetDate);
             if (!targetRec) return;
 
-            switchTab('tab-records', document.querySelectorAll('.tab-btn')[1]);
+            switchTab('tab-records', document.querySelectorAll('.tab-btn')[2]);
             document.getElementById('input-date').value = targetRec.date;
             document.getElementById('input-weight').value = targetRec.weight;
             document.getElementById('input-weight').focus();
@@ -897,7 +1105,7 @@
 
         function calculatePaceAndEstimation(latest) {
             if (records.length < 2) {
-                document.getElementById('val-pace').innerHTML = `- <span style="font-size: 0.85rem;">kg/주</span>`;
+                document.getElementById('val-pace').innerHTML = `- <span style="font-size: 0.8rem;">kg/주</span>`;
                 document.getElementById('val-est-date').innerText = '기록 축적 필요';
                 return;
             }
@@ -909,7 +1117,7 @@
             if (daysDiff > 0 && weightLoss > 0) {
                 const dailyRate = weightLoss / daysDiff;
                 const weeklyPace = (dailyRate * 7).toFixed(2);
-                document.getElementById('val-pace').innerHTML = `-${weeklyPace} <span style="font-size: 0.85rem;">kg/주</span>`;
+                document.getElementById('val-pace').innerHTML = `-${weeklyPace} <span style="font-size: 0.8rem;">kg/주</span>`;
 
                 const remainingWeight = latest.weight - TARGET_WEIGHT;
                 const daysNeeded = Math.ceil(remainingWeight / dailyRate);
@@ -929,7 +1137,7 @@
                     document.getElementById('val-est-sub').style.color = 'var(--warning)';
                 }
             } else {
-                document.getElementById('val-pace').innerHTML = `0.00 <span style="font-size: 0.85rem;">kg/주</span>`;
+                document.getElementById('val-pace').innerHTML = `0.00 <span style="font-size: 0.8rem;">kg/주</span>`;
                 document.getElementById('val-est-date').innerText = '12월 31일';
                 document.getElementById('val-est-sub').innerText = '기록 유지 중';
             }
@@ -962,6 +1170,9 @@
                         memo: '-'
                     })
                 });
+
+                // 귀여운 폭죽 효과 팡! 팡!
+                confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
 
                 setTimeout(() => {
                     fetchRecordsFromSheet();
